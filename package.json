@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "bootstrap-icons": "^1.11.1",
     "tedious": "^16.5.0"
   }
 }
