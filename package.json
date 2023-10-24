@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "bootstrap-icons": "^1.11.1",
     "tedious": "^16.5.0"
   }
