@@ -10,3 +10,5 @@ document.getElementById("login-form").addEventListener("submit",
             alert("Invalid Credentials");
         }
     });
+
+    console.log('script.js loaded');

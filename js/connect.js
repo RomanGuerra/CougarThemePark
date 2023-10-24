@@ -43,6 +43,7 @@ var connection = new Connection(config);
                 result+= column.value + " ";  
               }  
             });  
+            let display = document.body.getElementsByTagName("p");
             console.log(result);  
             result ="";  
         });  
