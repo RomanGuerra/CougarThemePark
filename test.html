@@ -4,20 +4,24 @@
     <title>Database Data Display</title>
 </head>
 <body>
+    <p id="test2">asdf</p>
     <div id="dataDisplay">
         <span id="test"></span>
     </div>
-
     <script>
         const header = {
             headers: {
-                "Content-Type": "application/json",
+                // "Content-Type": "application/json",
             }
         };
-        fetch("http://localhost:3000/data.json", header)
+        fetch("http://localhost:3000/api/employees", header)
             .then((res) => {
                 console.log(res);
-                document.getElementById("test").value = res;
+                return res.json();
+            })
+            .then((json) => {
+                console.log(json);
+                document.getElementById("test2").innerHTML = JSON.stringify(json);
             })
     </script>
 </body>
