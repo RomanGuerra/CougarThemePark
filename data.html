@@ -1,80 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Database Data Display</title>
+    <title>SQL Data Display</title>
 </head>
 <body>
-    <div id="dataDisplay"></div>
-
+    <h1>Data from SQL Server:</h1>
+    <table id="data-table">
+        <tr>
+            <th>feedback_id</th>
+            <th>visitor_id</th>
+            <th>feedback_text</th>
+        </tr>
+    </table>
     <script>
-        var Connection = require('tedious').Connection;
-        var Request = require('tedious').Request;
-        var TYPES = require('tedious').TYPES;
-
-        var config = {
-             server: 'cougar-park.database.windows.net',  //update me
-    authentication: {
-        type: 'default',
-        options: {
-            userName: 'team8', //update me
-            password: 'UHcougar8'  //update me
-        }
-    },
-    options: {
-        // If you are on Microsoft Azure, you need encryption:
-        encrypt: true,
-        database: 'Cougar Theme Park'  //update me
-    }
-        };
-
-        var connection = new Connection(config);
-
-        connection.on('connect', function (err) {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log("Connected");
-                executeStatement();
+        // JavaScript code to fetch data from the server and display it in the table
+        fetch('data.json', {  
+            headers: {  
+              Accept: "application/json"  
+            }  
+          })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not OK');
             }
+            return response.json();
+        }).then(data => {
+            const table = document.getElementById('data-table');
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${row.feedback_id}</td><td>${row.visitor_id}</td><td>${row.feedback_text}</td>`;
+                table.appendChild(tr);
+            }).catch(error => {
+                console.error('Error processing data:', error);
+
+                // Handle the error here by displaying an error message
+                const errorMessage = document.createElement('div');
+                errorMessage.textContent = 'An error occurred while processing data.';
+                errorMessage.style.color = 'red'; // Customize the error message styling
+                document.body.appendChild(errorMessage);
+            });
+        }).catch(error => {
+            console.error('Error fetching data:', error);
+
+            // Handle the error here by displaying an error message
+            const errorMessage = document.createElement('div');
+            errorMessage.textContent = 'An error occurred while fetching data.';
+            errorMessage.style.color = 'red'; // Customize the error message styling
+            document.body.appendChild(errorMessage);
         });
-
-        connection.connect();
-
-        function executeStatement() {
-            var request = new Request("SELECT * FROM FEEDBACK_REVIEWS;", function (err) {
-                if (err) {
-                    console.log(err);
-                }
-            });
-
-            var result = "";
-
-            request.on('row', function (columns) {
-                columns.forEach(function (column) {
-                    if (column.value === null) {
-                        console.log('NULL');
-                    } else {
-                        result += column.value + " ";
-                    }
-                });
-
-                // Append the result to the dataDisplay <div>
-                var dataDisplay = document.getElementById("dataDisplay");
-                dataDisplay.innerHTML += result + "<br>";
-                result = "";
-            });
-
-            request.on('done', function (rowCount, more) {
-                console.log(rowCount + ' rows returned');
-            });
-
-            // Close the connection after the final event emitted by the request, after the callback passes
-            request.on("requestCompleted", function (rowCount, more) {
-                connection.close();
-            });
-
-            connection.execSql(request);
-        }
     </script>
 </body>
 </html>

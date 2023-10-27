@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Visitor Information Data Report</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Visitor Information Data Report</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Visitor ID</th>
+                <th>Wristband ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Contact Information</th>
+                <th>Emergency Contact Information</th>
+                <th>Age</th>
+                <th>Ticket Type</th>
+            </tr>
+        </thead>
+        <tbody id="visitorData">
+        </tbody>
+    </table>
+
+    <script>
+        function fetchData() {
+            fetch('http://localhost:5500/getVisitorData') // Make a request to get the JSON data
+                .then(response => response.json()) // Parse the response as JSON
+                .then(data => {
+                    const visitorData = document.getElementById('visitorData');
+                    // Clear any existing data
+                    visitorData.innerHTML = '';
+
+                    // Loop through the data and create table rows
+                    data.forEach(visitor => {
+                        const row = document.createElement('tr');
+                        const properties = ['visitor_ID', 'wristband_ID', 'first_name', 'last_name', 'contact_information', 'emergency_contact', 'age', 'ticket_type'];
+
+                        properties.forEach(property => {
+                            const cell = document.createElement('td');
+                            cell.textContent = visitor[property];
+                            row.appendChild(cell);
+                        });
+
+                        visitorData.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        window.onload = fetchData;
+    </script>
+</body>
+</html>

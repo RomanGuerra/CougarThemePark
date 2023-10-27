@@ -1,0 +1,202 @@
+[
+  {
+    "visitor_ID": "1",
+    "wristband_ID": "1001",
+    "first_name": "Alice          ",
+    "last_name": "Johnson        ",
+    "contact_information": "1234567891",
+    "emergency_contact": "5555555551",
+    "age": 25,
+    "ticket_type": 1
+  },
+  {
+    "visitor_ID": "2",
+    "wristband_ID": "1002",
+    "first_name": "Bob            ",
+    "last_name": "Smith          ",
+    "contact_information": "9876543211",
+    "emergency_contact": "6666666661",
+    "age": 30,
+    "ticket_type": 2
+  },
+  {
+    "visitor_ID": "3",
+    "wristband_ID": "1003",
+    "first_name": "Charlie        ",
+    "last_name": "Davis          ",
+    "contact_information": "5555555552",
+    "emergency_contact": "7777777772",
+    "age": 22,
+    "ticket_type": 1
+  },
+  {
+    "visitor_ID": "4",
+    "wristband_ID": "1004",
+    "first_name": "Diana          ",
+    "last_name": "Roberts        ",
+    "contact_information": "9999999991",
+    "emergency_contact": "8888888881",
+    "age": 18,
+    "ticket_type": 3
+  },
+  {
+    "visitor_ID": "5",
+    "wristband_ID": "1005",
+    "first_name": "Ethan          ",
+    "last_name": "Turner         ",
+    "contact_information": "4444444441",
+    "emergency_contact": "1111111112",
+    "age": 35,
+    "ticket_type": 2
+  },
+  {
+    "visitor_ID": "6",
+    "wristband_ID": "1006",
+    "first_name": "Fiona          ",
+    "last_name": "Wilson         ",
+    "contact_information": "7777777773",
+    "emergency_contact": "3333333332",
+    "age": 28,
+    "ticket_type": 1
+  },
+  {
+    "visitor_ID": "7",
+    "wristband_ID": "1007",
+    "first_name": "George         ",
+    "last_name": "Perez          ",
+    "contact_information": "8888888882",
+    "emergency_contact": "9999999992",
+    "age": 26,
+    "ticket_type": 2
+  },
+  {
+    "visitor_ID": "8",
+    "wristband_ID": "1008",
+    "first_name": "Hannah         ",
+    "last_name": "Martinez       ",
+    "contact_information": "6666666663",
+    "emergency_contact": "5555555553",
+    "age": 32,
+    "ticket_type": 1
+  },
+  {
+    "visitor_ID": "9",
+    "wristband_ID": "1009",
+    "first_name": "Isaac          ",
+    "last_name": "Brown          ",
+    "contact_information": "1212121213",
+    "emergency_contact": "7777777774",
+    "age": 19,
+    "ticket_type": 3
+  },
+  {
+    "visitor_ID": "10",
+    "wristband_ID": "1010",
+    "first_name": "Julia          ",
+    "last_name": "Garcia         ",
+    "contact_information": "3434343432",
+    "emergency_contact": "5555555554",
+    "age": 27,
+    "ticket_type": 2
+  },
+  {
+    "visitor_ID": "11",
+    "wristband_ID": "1011",
+    "first_name": "Kevin          ",
+    "last_name": "Clark          ",
+    "contact_information": "5656565652",
+    "emergency_contact": "1111111113",
+    "age": 24,
+    "ticket_type": 1
+  },
+  {
+    "visitor_ID": "12",
+    "wristband_ID": "1012",
+    "first_name": "Lily           ",
+    "last_name": "King           ",
+    "contact_information": "7878787873",
+    "emergency_contact": "6666666664",
+    "age": 29,
+    "ticket_type": 3
+  },
+  {
+    "visitor_ID": "13",
+    "wristband_ID": "1013",
+    "first_name": "Matthew        ",
+    "last_name": "Adams          ",
+    "contact_information": "9898989891",
+    "emergency_contact": "7777777775",
+    "age": 21,
+    "ticket_type": 2
+  },
+  {
+    "visitor_ID": "14",
+    "wristband_ID": "1014",
+    "first_name": "Nora           ",
+    "last_name": "Morales        ",
+    "contact_information": "1212121214",
+    "emergency_contact": "5555555555",
+    "age": 33,
+    "ticket_type": 1
+  },
+  {
+    "visitor_ID": "15",
+    "wristband_ID": "1015",
+    "first_name": "Oscar          ",
+    "last_name": "Ramirez        ",
+    "contact_information": "3434343433",
+    "emergency_contact": "4444444442",
+    "age": 26,
+    "ticket_type": 2
+  },
+  {
+    "visitor_ID": "16",
+    "wristband_ID": "1016",
+    "first_name": "Penelope       ",
+    "last_name": "Evans          ",
+    "contact_information": "5656565653",
+    "emergency_contact": "8888888883",
+    "age": 29,
+    "ticket_type": 1
+  },
+  {
+    "visitor_ID": "17",
+    "wristband_ID": "1017",
+    "first_name": "Quincy         ",
+    "last_name": "Turner         ",
+    "contact_information": "7878787874",
+    "emergency_contact": "6666666665",
+    "age": 24,
+    "ticket_type": 3
+  },
+  {
+    "visitor_ID": "18",
+    "wristband_ID": "1018",
+    "first_name": "Rachel         ",
+    "last_name": "Taylor         ",
+    "contact_information": "9898989892",
+    "emergency_contact": "5555555556",
+    "age": 30,
+    "ticket_type": 2
+  },
+  {
+    "visitor_ID": "19",
+    "wristband_ID": "1019",
+    "first_name": "Samuel         ",
+    "last_name": "Harris         ",
+    "contact_information": "1212121215",
+    "emergency_contact": "7777777776",
+    "age": 20,
+    "ticket_type": 1
+  },
+  {
+    "visitor_ID": "20",
+    "wristband_ID": "1020",
+    "first_name": "Tessa          ",
+    "last_name": "Lopez          ",
+    "contact_information": "3434343434",
+    "emergency_contact": "9999999993",
+    "age": 28,
+    "ticket_type": 2
+  }
+]
