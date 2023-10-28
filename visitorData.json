@@ -198,5 +198,15 @@
     "emergency_contact": "9999999993",
     "age": 28,
     "ticket_type": 2
+  },
+  {
+    "visitor_ID": "21",
+    "wristband_ID": "1021",
+    "first_name": "Godswill       ",
+    "last_name": "Effi           ",
+    "contact_information": "1234567823",
+    "emergency_contact": "1234578432",
+    "age": 67,
+    "ticket_type": 3
   }
 ]
