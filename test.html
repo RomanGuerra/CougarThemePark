@@ -14,7 +14,7 @@
                 // "Content-Type": "application/json",
             }
         };
-        fetch("http://localhost:5500/api/employees", header)
+        fetch("http://localhost:3000/data.json", header)
             .then((res) => {
                 console.log(res);
                 return res.json();
