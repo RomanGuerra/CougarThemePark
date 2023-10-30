@@ -124,16 +124,15 @@ app.get("/api/employees", (req, res) => {
 app.get("/api/ride-count", (req, res) => {
   console.log("GET api/ride-count");
 
-  const asdf = `SELECT RIDE.ride_name, B.ride_ID, B.ride_count, RIDE.p_location FROM (
-    SELECT ride_ID, COUNT(*) AS ride_count FROM dbo.RIDE_OPERATION
-    WHERE YEAR(date) = ${req.query.year}
-    GROUP BY ride_ID
-  ) AS B
-  INNER JOIN RIDE ON RIDE.ride_ID = B.ride_ID
-  ORDER BY ride_count ASC;
-  `
-
-
+  // `SELECT RIDE.ride_name, B.ride_ID, B.ride_count, RIDE.p_location FROM (
+  //   SELECT ride_ID, COUNT(*) AS ride_count FROM dbo.RIDE_OPERATION
+  //   WHERE YEAR(date) = ${req.query.year}
+  //   GROUP BY ride_ID
+  // ) AS B
+  // INNER JOIN RIDE ON RIDE.ride_ID = B.ride_ID
+  // ORDER BY ride_count ASC;
+  // `
+  
   var sql_call = `SELECT RIDE.ride_name, B.ride_ID, B.ride_count, RIDE.p_location FROM (
     SELECT ride_ID, COUNT(*) AS ride_count FROM dbo.RIDE_OPERATION
   `
@@ -155,8 +154,6 @@ app.get("/api/ride-count", (req, res) => {
     sql_call += "ORDER BY ride_count ASC"
   }
   sql_call += ";";
-
-  console.log(sql_call);
 
   executeStatement(sql_call, (rows) => {
     res.json(rows);
