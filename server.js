@@ -114,12 +114,27 @@ function executeStatement(sql, callback) {
 app.use(express.static(__dirname));
 
 app.get("/api/employees", (req, res) => {
-  console.log("api/employees hit");
+  console.log("GET api/employees");
   const sql_call = "SELECT * FROM EMPLOYEE;"
   executeStatement(sql_call, (rows) => {
     res.json(rows);
   });
 });
+
+app.get("/api/ride-count", (req, res) => {
+  console.log("GET api/ride-count");
+  const sql_call = `SELECT RIDE.ride_name, B.ride_ID, B.ride_count, RIDE.p_location FROM (
+    SELECT ride_ID, COUNT(*) AS ride_count FROM dbo.RIDE_OPERATION
+    WHERE MONTH(date) = 1 AND YEAR(date) = 2012
+    GROUP BY ride_ID
+  ) AS B
+  INNER JOIN RIDE ON RIDE.ride_ID = B.ride_ID
+  ORDER BY ride_count ASC;
+  `
+  executeStatement(sql_call, (rows) => {
+    res.json(rows);
+  })
+})
 
 // Start the listening on specified port
 console.log(__dirname)
