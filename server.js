@@ -114,12 +114,83 @@ function executeStatement(sql, callback) {
 app.use(express.static(__dirname));
 
 app.get("/api/employees", (req, res) => {
-  console.log("api/employees hit");
+  console.log("GET api/employees");
   const sql_call = "SELECT * FROM EMPLOYEE;"
   executeStatement(sql_call, (rows) => {
     res.json(rows);
   });
 });
+
+app.get("/api/ride-count", (req, res) => {
+  console.log("GET api/ride-count");
+
+  // `SELECT RIDE.ride_name, B.ride_ID, B.ride_count, RIDE.p_location FROM (
+  //   SELECT ride_ID, COUNT(*) AS ride_count FROM dbo.RIDE_OPERATION
+  //   WHERE YEAR(date) = ${req.query.year}
+  //   GROUP BY ride_ID
+  // ) AS B
+  // INNER JOIN RIDE ON RIDE.ride_ID = B.ride_ID
+  // ORDER BY ride_count ASC;
+  // `
+
+  var sql_call = `SELECT RIDE.ride_name, B.ride_ID, B.ride_count, RIDE.p_location FROM (
+    SELECT ride_ID, COUNT(*) AS ride_count FROM dbo.RIDE_OPERATION
+  `
+  if (req.query.month == 0) {
+    sql_call += `WHERE YEAR(date) = ${req.query.year}`
+  } else {
+    sql_call += `WHERE YEAR(date) = ${req.query.year} AND MONTH(date) = ${req.query.month}`
+  }
+  sql_call += `
+      GROUP BY ride_ID
+    ) AS B
+    INNER JOIN RIDE ON RIDE.ride_ID = B.ride_ID
+  `;
+
+  if (req.query.order === "ride_op_dsc") {
+    sql_call += "ORDER BY ride_count DESC";
+  }
+  if (req.query.order === "ride_op_asc") {
+    sql_call += "ORDER BY ride_count ASC"
+  }
+  sql_call += ";";
+
+  executeStatement(sql_call, (rows) => {
+    res.json(rows);
+  })
+})
+
+app.get("/api/rainout-count", (req, res) => {
+  console.log("GET api/rainout-count");
+
+  // SELECT MONTH(date) as month, COUNT(*) as rainout_count FROM RAINOUT
+  // WHERE YEAR(date) = ${sql.query.year}
+  // GROUP BY MONTH(date)
+  // ORDER BY rainout_count ASC;
+
+  var sql_call = `
+    SELECT MONTH(date) as month, COUNT(*) as rainout_count FROM RAINOUT
+    WHERE YEAR(date) = ${req.query.year}
+    GROUP BY MONTH(date)
+  `
+  if (req.query.order === "month_asc") {
+    sql_call += "ORDER BY month ASC";
+  }
+  if (req.query.order === "month_dsc") {
+    sql_call += "ORDER BY month DESC"
+  }
+  if (req.query.order === "rainout_asc") {
+    sql_call += "ORDER BY rainout_count DESC";
+  }
+  if (req.query.order === "rainout_dsc") {
+    sql_call += "ORDER BY rainout_count ASC"
+  }
+  sql_call += ";";
+
+  executeStatement(sql_call, (rows) => {
+    res.json(rows);
+  })
+})
 
 // Start the listening on specified port
 console.log(__dirname)
