@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Visitor Count</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 50%;
+            margin: 0 auto;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Visitor Count</h1>
+    <table>
+        <tr>
+            <th>Total Visitors</th>
+        </tr>
+        <tr>
+            <td id="visitorCount">Loading...</td>
+        </tr>
+    </table>
+
+    <script>
+        // Fetch the visitor count from your server using JavaScript
+        fetch('http://localhost:5500/getVisitorCount')
+            .then(response => response.json())
+            .then(data => {
+                // Update the visitor count on your webpage
+                document.getElementById('visitorCount').textContent = data.visitorCount;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    </script>
+</body>
+</html>

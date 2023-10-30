@@ -35,7 +35,7 @@ sql.connect(config, (err) => {
 
 // Define a route to retrieve visitor data
 app.get('/getVisitorData', (req, res) => {
-  const query = 'SELECT * FROM VISITOR'; // Replace with your table name
+  const query = 'SELECT * FROM VISITOR';
   sql.query(query, (err, result) => {
     if (err) {
       console.error('Database query error:', err);
