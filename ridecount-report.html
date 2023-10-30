@@ -31,23 +31,23 @@
             <p>Request the number of visitors that have used a ride within a given time period.</p>
             <p>Set the parameters below to generate a report</p>
             <label for="Month">Month</label>
-            <select class="form-control">
-                <option>Entire Year</option>
-                <option>January</option>
-                <option>February</option>
-                <option>March</option>
-                <option>April</option>
-                <option>May</option>
-                <option>June</option>
-                <option>July</option>
-                <option>August</option>
-                <option>September</option>
-                <option>October</option>
-                <option>November</option>
-                <option>December</option>
+            <select id="month" class="form-control">
+                <option value="0">Entire Year</option>
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
             </select>
             <label for="Year">Year</label>
-            <select class="form-control">
+            <select id="year" class="form-control">
                 <option>2012</option>
                 <option>2013</option>
                 <option>2014</option>
@@ -62,12 +62,11 @@
                 <option>2023</option>
             </select>
             <label for="Order">Order</label>
-            <select class="form-control">
-                <option>Visit Count Ascending</option>
-                <option>Visit Count Descending</option>
-                <option>Ride Operations Ascending</option>
-                <option>Ride Operations Descending</option>
-                <option>Ride Operations Descending</option>
+            <select id="order" class="form-control">
+                <option value="visit_asc">Visit Count Ascending</option>
+                <option value="visit_dsc">Visit Count Descending</option>
+                <option value="ride_op_asc">Ride Operations Count Ascending</option>
+                <option value="ride_op_dsc">Ride Operations Count Descending</option>
             </select>
             </br>
             <button type="submit" onclick="requestReport()">Request</button>
@@ -94,8 +93,18 @@
     </main>
 
     <script>
+        function getRideCountParams() {
+            return {
+                month: document.getElementById("month").value,
+                year: document.getElementById("year").value,
+                order: document.getElementById("order").value
+            };
+        }
+
         function requestReport() {
-            fetch("/api/ride-count")
+            const queryParams = getRideCountParams();
+
+            fetch("/api/ride-count?" + new URLSearchParams(queryParams))
             .then((res) => {
                 res.json()
                 .then((json) => {

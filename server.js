@@ -123,14 +123,41 @@ app.get("/api/employees", (req, res) => {
 
 app.get("/api/ride-count", (req, res) => {
   console.log("GET api/ride-count");
-  const sql_call = `SELECT RIDE.ride_name, B.ride_ID, B.ride_count, RIDE.p_location FROM (
+
+  const asdf = `SELECT RIDE.ride_name, B.ride_ID, B.ride_count, RIDE.p_location FROM (
     SELECT ride_ID, COUNT(*) AS ride_count FROM dbo.RIDE_OPERATION
-    WHERE MONTH(date) = 1 AND YEAR(date) = 2012
+    WHERE YEAR(date) = ${req.query.year}
     GROUP BY ride_ID
   ) AS B
   INNER JOIN RIDE ON RIDE.ride_ID = B.ride_ID
   ORDER BY ride_count ASC;
   `
+
+
+  var sql_call = `SELECT RIDE.ride_name, B.ride_ID, B.ride_count, RIDE.p_location FROM (
+    SELECT ride_ID, COUNT(*) AS ride_count FROM dbo.RIDE_OPERATION
+  `
+  if (req.query.month == 0) {
+    sql_call += `WHERE YEAR(date) = ${req.query.year}`
+  } else {
+    sql_call += `WHERE YEAR(date) = ${req.query.year} AND MONTH(date) = ${req.query.month}`
+  }
+  sql_call += `
+      GROUP BY ride_ID
+    ) AS B
+    INNER JOIN RIDE ON RIDE.ride_ID = B.ride_ID
+  `;
+
+  if (req.query.order === "ride_op_dsc") {
+    sql_call += "ORDER BY ride_count DESC";
+  }
+  if (req.query.order === "ride_op_asc") {
+    sql_call += "ORDER BY ride_count ASC"
+  }
+  sql_call += ";";
+
+  console.log(sql_call);
+
   executeStatement(sql_call, (rows) => {
     res.json(rows);
   })
