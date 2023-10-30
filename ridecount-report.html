@@ -27,7 +27,7 @@
     </nav>
     <main>
         <section class="dashboard-card">
-            <h2>Ride Count Report</h2>
+            <h2>Request Ride Count Report</h2>
             <p>Request the number of visitors that have used a ride within a given time period.</p>
             <p>Set the parameters below to generate a report</p>
             <label for="Month">Month</label>
@@ -71,16 +71,61 @@
             </select>
             </br>
             <button type="submit" onclick="requestReport()">Request</button>
-
+        </section>
+        </br>
+        <section id="report" class="dashboard-card" >
+            <h2>Ride Count Report</h2>
+            <table id="report-table" class="table">
+                <tr>
+                    <th>Ride Name</th>
+                    <th>Ride ID</th>
+                    <th>Ride Operation Count</th>
+                    <th>Location</th>
+                </tr>
+                <tr>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                </tr>
+            </table>
         </section>
         <p></p>
     </main>
 
     <script>
         function requestReport() {
-            console.log("Hello!");
+            fetch("/api/ride-count")
+            .then((res) => {
+                res.json()
+                .then((json) => {
+                    console.log(json);
+                    
+                    reportTableNode = document.getElementById("report-table");
+                    reportTableNode.innerHTML = `
+                    <tr>
+                        <th>Ride Name</th>
+                        <th>Ride ID</th>
+                        <th>Ride Operation Count</th>
+                        <th>Location</th>
+                    </tr>
+                    `;
+                    for (var row of json) {
+                        var newRow = "<tr>";
+                        for (var key of Object.keys(row)) {
+                            newRow += "<td>";
+                            newRow += String(row[key]);
+                            newRow += "</td>"
+                        }
+                        newRow += "</tr>";
+                        reportTableNode.innerHTML += newRow;
+                    }
+
+                    document.getElementById("report").style.visibility = "visible";
+                })
+            });
         }
-        var js = 1;
+        document.getElementById("report").style.visibility = "hidden";
     </script>
 </body>
 
