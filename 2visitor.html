@@ -210,20 +210,22 @@
   
   <div class="b-example-divider b-example-vr"></div>
   
-  <div class="container p-5 my-5 border">                
+  <div class="container p-5 my-5 border table-responsive">                
     <button type="button" onclick="displayJSONData()" id="list" class="btn btn-primary">Fetch Data</button>
-    <table class="table table-hover" id="json-display">
-        <tr>
-            <th>Visitor ID</th>
-            <th>Wristband ID</th>
-            <th>Firstname</th>
-            <th>Lastname</th>
-            <th>Phone</th>
-            <th>Emergency</th>
-            <th>Age</th>
-            <th>Ticket Type</th>
-        </tr>
-
+    <table class="table table-hover">
+      <thead class="table-secondary">      
+      <tr>
+          <th>Visitor ID</th>
+          <th>Wristband ID</th>
+          <th>Firstname</th>
+          <th>Lastname</th>
+          <th>Phone</th>
+          <th>Emergency</th>
+          <th>Age</th>
+          <th>Ticket Type</th>
+      </tr>
+      </thead>
+      <tbody class="table-group-divider" id="json-display"></tbody>
     </table>
   </div>
 
