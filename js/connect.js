@@ -1,4 +1,4 @@
-var Connection = require('tedious').Connection;  
+var Connection = require('tedious').Connection;
 var config = {  
     server: 'cougar-park.database.windows.net',  //update me
     authentication: {
@@ -30,7 +30,7 @@ var connection = new Connection(config);
     var TYPES = require('tedious').TYPES;  
   
     function executeStatement() {  
-        var request = new Request("SELECT * FROM FEEDBACK_REVIEWS;", function(err) {  
+        var request = new Request("SELECT * FROM VISITOR;", function(err) {  
         if (err) {  
             console.log(err);}  
         });  

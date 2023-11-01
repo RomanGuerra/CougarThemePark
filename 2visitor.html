@@ -97,8 +97,8 @@
     <ul class="nav nav-pills flex-column mb-auto">
 
       <li class="nav-item">
-        <a href="dashboard.html" class="nav-link active" aria-current="page">
-        <svg class="bi pe-none me-2" width="18" height="18" fill="white"><use xlink:href="#homesvg"></use></svg>
+        <a href="dashboard.html" class="nav-link text-dark" aria-current="page">
+        <svg class="bi pe-none me-2" width="18" height="18" fill="black"><use xlink:href="#homesvg"></use></svg>
         Home
         </a>
       </li>
@@ -111,8 +111,8 @@
       </li>
     
       <li class="nav-item">
-        <a href="2visitor.html" class="nav-link text-dark" aria-current="page">
-          <svg class="bi pe-none me-2" width="18" height="18" fill="black"><use xlink:href="#visitorsvg"></use></svg>
+        <a href="2visitor.html" class="nav-link active" aria-current="page">
+          <svg class="bi pe-none me-2" width="18" height="18" fill="white"><use xlink:href="#visitorsvg"></use></svg>
           Visitors
         </a>
       </li>
@@ -209,15 +209,30 @@
   </div>
   
   <div class="b-example-divider b-example-vr"></div>
-
-  <div class="container p-5 my-5 border">                
-    <h2>Welcome Admin!</h2>
+  
+  <div class="container p-5 my-5 border table-responsive">                
+    <button type="button" onclick="displayVisitorJSON()" id="list" class="btn btn-primary">Fetch Data</button>
+    <table class="table table-hover">
+      <thead class="table-secondary">      
+      <tr>
+          <th>Visitor ID</th>
+          <th>Wristband ID</th>
+          <th>Firstname</th>
+          <th>Lastname</th>
+          <th>Phone</th>
+          <th>Emergency</th>
+          <th>Age</th>
+          <th>Ticket Type</th>
+      </tr>
+      </thead>
+      <tbody class="table-group-divider" id="json-display"></tbody>
+    </table>
   </div>
-
 
 </main>
   <script type="module" src="js/connect.js"></script>
   <script src="server.js"></script> 
+  <script src="js/database.js"></script> 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

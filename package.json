@@ -10,6 +10,6 @@
     "tedious": "^16.5.0"
   },
   "scripts": {
-    "start": "nodemon server.js"
+    "build": "browserify server.js -o bundle.js"
   }
 }
