@@ -1,4 +1,4 @@
-function displayJSONData() {
+function displayVisitorJSON() {
     // Fetch your JSON data from a URL or local file
     fetch("visitorData.json")
         .then(response => response.json())

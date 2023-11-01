@@ -1,49 +1,42 @@
-const { Connection, Request, TYPES } = require('tedious');
 
-const config = {
-    server: 'cougar-park.database.windows.net',
-    authentication: {
-        type: 'default',
-        options: {
-            userName: 'team8',
-            password: 'UHcougar8',
-        },
-    },
-    options: {
-        encrypt: true,
-        database: 'Cougar Theme Park',
-    },
-};
-
-const connection = new Connection(config);
-
-// Handle connection errors
-connection.on('error', function (err) {
-    console.error('Connection error:', err);
-});
-
-// Wait for the connection to be established
-connection.on('connect', function (err) {
-    if (err) {
-        console.error('Connection error:', err);
-    } else {
-        console.log('Connected');
-        // Now that the connection is established, you can execute your SQL request
-        executeStatement1('John', 'Doe', '1234567890', '0987654321', 25, 2);
-    }
-});
-
-// Establish the connection
-connection.connect();
 
 function executeStatement1(fname, lname, phone, ename, age, tickettype) {
+    const { Connection, Request, TYPES } = require('tedious');
+    const config = {
+        server: 'cougar-park.database.windows.net',
+        authentication: {
+            type: 'default',
+            options: {
+                userName: 'team8',
+                password: 'UHcougar8',
+            },
+        },
+        options: {
+            encrypt: true,
+            database: 'Cougar Theme Park',
+        },
+    };
+    const connection = new Connection(config);
+    // Handle connection errors
+    connection.on('error', function (err) {
+        console.error('Connection error:', err);
+    });
+    // Wait for the connection to be established
+    connection.on('connect', function (err) {
+        if (err) {
+            console.error('Connection error:', err);
+        } else {
+            console.log('Connected');
+            // Now that the connection is established, you can execute your SQL request
+            console.log('TEST');        
+        }
+    });
+
+    // Establish the connection
+    connection.connect();
+
+
     console.log('Executing SQL');
-    fname = "Roman";
-    lname = "Guerra";
-    phone = "2817328440"; // Phone number as a string
-    ename = "189565";
-    age = 21;
-    tickettype = 3;
     const visitorID = Math.floor(Math.random() * 2147483647); // Generate a random bigint
     const wristbandID = Math.floor(Math.random() * 2147483647); // Generate a random bigint
 
