@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "undefined/subscriptions/ad526528-be0c-4bf9-a250-2dfcda59ad96/resourceGroups/CougarThemePark/providers/Microsoft.Web/sites/cougar-theme-park-app-service-nodejs",
+    "appService.deploySubpath": "."
+}

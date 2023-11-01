@@ -13,6 +13,11 @@ document.getElementById("login-form").addEventListener("submit",
         if (username === "coug@CTP.com" && password === "123coug") {
             window.location.href = "dashboard.html";
         }
+        // ADMIN - USER
+        else if (username === "uh@CTP.com" && password === "codecoug") {
+            window.location.href = "1addvisitor.html";
+        }
+        // SALES EMPLOYEE - USER
         else {
             alert("Invalid Credentials");
         }

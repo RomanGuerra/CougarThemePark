@@ -75,7 +75,7 @@
     </main>
 
     <script>
-        function getRideCountParams() {
+        function getRainoutCountParams() {
             return {
                 year: document.getElementById("year").value,
                 order: document.getElementById("order").value
@@ -83,7 +83,7 @@
         }
 
         function requestReport() {
-            const queryParams = getRideCountParams();
+            const queryParams = getRainoutCountParams();
 
             fetch("/api/rainout-count?" + new URLSearchParams(queryParams))
             .then((res) => {
