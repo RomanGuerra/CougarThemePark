@@ -53,8 +53,8 @@ function executeStatement1(fname, lname, phone, ename, age, tickettype) {
 
     request.addParameter('visitorID', TYPES.BigInt, visitorID);
     request.addParameter('wristbandID', TYPES.BigInt, wristbandID);
-    request.addParameter('fname', TYPES.NVarChar, fname);
-    request.addParameter('lname', TYPES.NVarChar, lname);
+    request.addParameter('fname', TYPES.Char, fname);
+    request.addParameter('lname', TYPES.Char, lname);
     request.addParameter('phone', TYPES.BigInt, phone);
     request.addParameter('ename', TYPES.BigInt, ename);
     request.addParameter('age', TYPES.TinyInt, age);

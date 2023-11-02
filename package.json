@@ -7,6 +7,7 @@
     "fs": "^0.0.1-security",
     "mssql": "^10.0.1",
     "mysql": "^2.18.1",
+    "require": "^0.4.4",
     "tedious": "^16.5.0"
   },
   "scripts": {
