@@ -143,6 +143,17 @@ app.get("/api/rainout-count", (req, res) => {
 })
 
 app.use(bodyParser.json());
+
+app.get("/api/visitors", (req, res) => {
+  console.log("GET api/visitors");
+  const sql_call = "SELECT * FROM VISITOR;";
+  executeStatement(sql_call, (rows) => {
+    console.log(rows);
+    res.json(rows);
+  });
+});
+
+
 app.post("/api/add-visitor", (req, res) => {
   console.log("POST /api/add-visitor");
 
