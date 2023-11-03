@@ -6,6 +6,8 @@ const express = require('express');
 const app = express();
 const port = 5500;
 
+const bodyParser = require('body-parser');
+
 var Connection = require('tedious').Connection;  
 var config = {  
     server: 'cougar-park.database.windows.net',  //update me
@@ -139,6 +141,63 @@ app.get("/api/rainout-count", (req, res) => {
     res.json(rows);
   })
 })
+
+app.use(bodyParser.json());
+
+app.get("/api/visitors", (req, res) => {
+  console.log("GET api/visitors");
+  const sql_call = "SELECT * FROM VISITOR;";
+  executeStatement(sql_call, (rows) => {
+    console.log(rows);
+    res.json(rows);
+  });
+});
+
+
+app.post("/api/add-visitor", (req, res) => {
+  console.log("POST /api/add-visitor");
+
+  const { fname, lname, phone, ename, age, tickettype } = req.body;
+  console.log('Executing SQL');
+  
+  const visitorID = Math.floor(Math.random() * 2147483647); // Generate a random bigint
+  const wristbandID = Math.floor(Math.random() * 2147483647); // Generate a random bigint
+  const request = new Request(
+      `INSERT INTO VISITOR (visitor_ID, wristband_ID, first_name, last_name, contact_information, emergency_contact, age, ticket_type)
+       VALUES (@visitorID, @wristbandID, @fname, @lname, @phone, @ename, @age, @tickettype);
+       SELECT SCOPE_IDENTITY() AS VisitorID;`,
+      (err) => {
+          if (err) {
+              console.error('SQL Query Error:', err);
+          }
+      }
+  );
+    request.addParameter('visitorID', TYPES.BigInt, visitorID);
+    request.addParameter('wristbandID', TYPES.BigInt, wristbandID);
+    request.addParameter('fname', TYPES.NVarChar, fname);
+    request.addParameter('lname', TYPES.NVarChar, lname);
+    request.addParameter('phone', TYPES.BigInt, phone);
+    request.addParameter('ename', TYPES.BigInt, ename);
+    request.addParameter('age', TYPES.TinyInt, age);
+    request.addParameter('tickettype', TYPES.TinyInt, tickettype);
+    request.on('row', function (columns) {
+        columns.forEach(function (column) {
+            if (column.value === null) {
+                console.log('NULL');
+                res.status(200).json({ visitorID: column.value });
+            } else {
+                //console.log('Visitor ID of inserted item is ' + column.value);
+                res.status(200).json({ visitorID: column.value });
+            }
+        });
+    });
+
+  // Close the connection after the final event emitted by the request, after the callback passes
+  request.on('requestCompleted', function (rowCount, more) {
+      //connection.close();
+  });
+  connection.execSql(request);
+});
 
 // Start the listening on specified port
 console.log(__dirname)
