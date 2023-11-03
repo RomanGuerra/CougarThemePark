@@ -153,6 +153,15 @@ app.get("/api/visitors", (req, res) => {
   });
 });
 
+app.get("/api/visitorsCount", (req, res) => {
+  console.log("GET api/visitorsCount");
+  const sql_call = "SELECT COUNT(*) FROM VISITOR;";
+  executeStatement(sql_call, (rows) => {
+    console.log(rows);
+    res.json(rows);
+  });
+});
+
 
 app.post("/api/add-visitor", (req, res) => {
   console.log("POST /api/add-visitor");
