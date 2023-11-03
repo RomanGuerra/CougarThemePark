@@ -199,6 +199,39 @@ app.post("/api/add-visitor", (req, res) => {
   connection.execSql(request);
 });
 
+app.get("/api/visitor-report", (req, res) => {
+  console.log("GET api/visitor-report");
+
+  // SQL query to retrieve visitor ticket types by first name, last name, and age
+  const ticketType = req.query.ticket_type;
+  var sql_call = `
+    SELECT first_name, last_name, age
+    FROM VISITOR
+    WHERE ticket_type = @ticketType
+  `;
+
+  // Add ordering based on the request query parameter
+  if (req.query.order === "first_name_asc") {
+    sql_call += " ORDER BY first_name ASC";
+  }
+  if (req.query.order === "first_name_dsc") {
+    sql_call += " ORDER BY first_name DESC";
+  }
+  if (req.query.order === "last_name_asc") {
+    sql_call += " ORDER BY last_name ASC";
+  }
+  if (req.query.order === "last_name_dsc") {
+    sql_call += " ORDER BY last_name DESC";
+  }
+  sql_call += ";";
+
+  executeStatement(sql_call, (rows) => {
+    res.json(rows);
+  });
+});
+
+
+
 // Start the listening on specified port
 console.log(__dirname)
 app.listen(port, () => {
