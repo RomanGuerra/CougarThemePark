@@ -6,6 +6,13 @@ table {
     border-collapse: collapse;
 }
 
+#navigation {
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+#center-container {
+    background-color: rgba(255, 255, 255, 0.7);
+}
 .login-container {
     max-width: 400px;
     margin: 100px auto;
@@ -17,6 +24,7 @@ table {
 
 main {
     max-width: 1500px;
+    background-color: rgba(255, 255, 255, 0.7);
 }
 
 form {
@@ -35,4 +43,10 @@ img {
     max-width: 100%;
     display: block;
     margin: 0 auto;
+}
+
+body {
+    background-image: url('/img/index_background.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
 }
