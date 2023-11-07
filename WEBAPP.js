@@ -208,6 +208,8 @@ app.post("/api/add-visitor", (req, res) => {
   connection.execSql(request);
 });
 
+// sql works 
+
 app.get("/api/visitor-report", (req, res) => {
   console.log("GET api/visitor-report");
 
@@ -216,9 +218,16 @@ app.get("/api/visitor-report", (req, res) => {
   var sql_call = `
     SELECT first_name, last_name, age
     FROM VISITOR
-    WHERE ticket_type = @ticketType
+    WHERE ticket_type = 2
   `;
 
+  //sql_call += ticketType;
+  // i think this shoudl work
+  // i'll send you the statement later...
+  // leaving WHERE ticket_type = empty should be good?
+  // I really appreciate the help, now I can start the homepage
+  // alright bro, thanks for lookin out
+  // glad to help, let me know if you need anything else. I'll be up for a bit longer.
   // Add ordering based on the request query parameter
   if (req.query.order === "first_name_asc") {
     sql_call += " ORDER BY first_name ASC";
@@ -238,7 +247,6 @@ app.get("/api/visitor-report", (req, res) => {
     res.json(rows);
   });
 });
-
 
 
 // Start the listening on specified port
