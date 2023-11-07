@@ -208,7 +208,6 @@ app.post("/api/add-visitor", (req, res) => {
   connection.execSql(request);
 });
 
-// sql works 
 
 app.get("/api/visitor-report", (req, res) => {
   console.log("GET api/visitor-report");
@@ -228,6 +227,7 @@ app.get("/api/visitor-report", (req, res) => {
   // I really appreciate the help, now I can start the homepage
   // alright bro, thanks for lookin out
   // glad to help, let me know if you need anything else. I'll be up for a bit longer.
+  
   // Add ordering based on the request query parameter
   if (req.query.order === "first_name_asc") {
     sql_call += " ORDER BY first_name ASC";
