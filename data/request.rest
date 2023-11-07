@@ -1,0 +1,122 @@
+GET http://localhost:3000/users
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "####",
+    "password": "####"
+}
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "john.doe@CTP.com",
+    "password": "CodeLover123"
+}
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "jane.smith@CTP.com",
+    "password": "ByteMeUp!"
+}
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "mike.johnson@CTP.com",
+    "password": "CoderJoy!"
+}
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "sarah.brown@CTP.com",
+    "password": "SweetScripter"
+}
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "david.lee@CTP.com",
+    "password": "DebugHugger"
+}
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "emily.wilson@CTP.com",
+    "password": "RainbowCode"
+}
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "michael.garcia@CTP.com",
+    "password": "HappyHackDay"
+}
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "linda.martinez@CTP.com",
+    "password": "ByteBliss"
+}
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "william.lopez@CTP.com",
+    "password": "CodeNinja!"
+}
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "samantha.harris@CTP.com",
+    "password": "CaffeineCoder"
+}
+
+
+###
+
+POST http://localhost:3000/users/login
+Content-Type: application/json
+
+{
+    "name": "coug@CTP.com",
+    "password": "123coug"
+}
