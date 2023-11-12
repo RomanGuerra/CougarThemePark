@@ -217,8 +217,7 @@ app.get("/api/visitor-report", (req, res) => {
   var sql_call = `
     SELECT first_name, last_name, age
     FROM VISITOR
-    WHERE ticket_type = 2
-  `;
+    WHERE ticket_type = ${req.query.ticket}`
 
   //sql_call += ticketType;
   // i think this shoudl work
