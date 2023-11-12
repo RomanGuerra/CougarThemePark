@@ -219,7 +219,6 @@ app.get("/api/visitor-report", (req, res) => {
   var sql_call = `
     SELECT first_name, last_name, age
     FROM VISITOR
-<<<<<<< HEAD
     WHERE ticket_type = ${req.query.ticket}
   `;
 
