@@ -213,7 +213,40 @@
 
 
   <div class="container p-5" id="center-container">                
-    <h2>DATA GOES HERE</h2>
+    <h2>Ride Maintenance Report</h2>
+
+    <form id="maintenanceForm">
+        <div class="mb-3">
+            <label for="rideName" class="form-label">Ride Name</label>
+            <input type="text" class="form-control" id="rideName" name="rideName" required>
+        </div>
+        <div class="mb-3">
+            <label for="maintenanceDate" class="form-label">Maintenance Date</label>
+            <input type="date" class="form-control" id="maintenanceDate" name="maintenanceDate" required>
+        </div>
+        <div class="mb-3">
+            <label for="maintenanceDescription" class="form-label">Maintenance Description</label>
+            <textarea class="form-control" id="maintenanceDescription" name="maintenanceDescription" rows="4" required></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="maintenanceTasks" class="form-label">Maintenance Tasks</label>
+          <select class="form-control" id="maintenanceTasks" name="maintenanceTasks" multiple>
+              <option value="Daily Inspections">Daily Inspections</option>
+              <option value="Regular Servicing">Regular Servicing</option>
+              <option value="Manufacturer Recommendations">Manufacturer Recommendations</option>
+              <option value="Periodic Safety Audits">Periodic Safety Audits</option>
+              <option value="Staff Training">Staff Training</option>
+              <option value="Record-Keeping">Record-Keeping</option>
+              <option value="Emergency Procedures">Emergency Procedures</option>
+              <option value="Compliance with Regulations">Compliance with Regulations</option>
+              <option value="Seasonal Shutdowns">Seasonal Shutdowns</option>
+              <option value="Quality Assurance">Quality Assurance</option>
+          </select>
+      </div>
+        <button type="submit" class="btn btn-primary">Submit Report</button>
+    </form>
+
+
   </div>
 
   <div class="b-example-divider b-example-vr"></div>
