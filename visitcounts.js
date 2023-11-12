@@ -9,10 +9,10 @@ const app = express();
 app.use(cors({ origin: 'http://127.0.0.1:5500' }));
 
 const config = {
-  user: 'team8',
-  password: 'UHcougar8',
-  server: 'cougar-park.database.windows.net',
-  database: 'Cougar Theme Park',
+  user: 'sa',
+  password: 'Umacosc3380!',
+  server: '64.227.100.29',
+  database: 'CougarThemeParkBackUp',
   options: {
     encrypt: true, // Required for Azure SQL
   },

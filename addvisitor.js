@@ -3,17 +3,17 @@
 function executeStatement1(fname, lname, phone, ename, age, tickettype) {
     const { Connection, Request, TYPES } = require('tedious');
     const config = {
-        server: 'cougar-park.database.windows.net',
+        server: '64.227.100.29',
         authentication: {
             type: 'default',
             options: {
-                userName: 'team8',
-                password: 'UHcougar8',
+                userName: 'sa',
+                password: 'Umacosc3380!',
             },
         },
         options: {
             encrypt: true,
-            database: 'Cougar Theme Park',
+            database: 'CougarThemeParkBackUp',
         },
     };
     const connection = new Connection(config);

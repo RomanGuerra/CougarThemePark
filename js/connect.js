@@ -1,17 +1,17 @@
 var Connection = require('tedious').Connection;
 var config = {  
-    server: 'cougar-park.database.windows.net',  //update me
+    server: '64.227.100.29',  //update me
     authentication: {
         type: 'default',
         options: {
-            userName: 'team8', //update me
-            password: 'UHcougar8'  //update me
+            userName: 'sa', //update me
+            password: 'Umacosc3380!'  //update me
         }
     },
     options: {
         // If you are on Microsoft Azure, you need encryption:
         encrypt: true,
-        database: 'Cougar Theme Park'  //update me
+        database: 'CougarThemeParkBackUp'  //update me
     }
 };  
 

@@ -10,17 +10,17 @@ app.use(cors({ origin: 'http://127.0.0.1:5500' }));
 
 // Database configuration
 const config = {
-  server: 'cougar-park.database.windows.net',
+  server: '64.227.100.29',
   authentication: {
     type: 'default',
     options: {
-      userName: 'team8',
-      password: 'UHcougar8',
+      userName: 'sa',
+      password: 'Umacosc3380!',
     },
   },
   options: {
     encrypt: true, // Required for Azure SQL
-    database: 'Cougar Theme Park',
+    database: 'CougarThemeParkBackUp',
   },
 };
 
