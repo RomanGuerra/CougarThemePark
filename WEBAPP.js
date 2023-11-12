@@ -10,18 +10,19 @@ const bodyParser = require('body-parser');
 
 var Connection = require('tedious').Connection;  
 var config = {  
-    server: 'cougar-park.database.windows.net',  //update me
+    server: '64.227.100.29',  //update me
     authentication: {
         type: 'default',
         options: {
-            userName: 'team8', //update me
-            password: 'UHcougar8'  //update me
+            userName: 'sa', //update me
+            password: 'Umacosc3380!'  //update me
         }
     },
     options: {
         // If you are on Microsoft Azure, you need encryption:
         encrypt: true,
-        database: 'Cougar Theme Park'  //update me
+        trustServerCertificate: true,
+        database: 'CougarThemeParkBackUp'  //update me
     }
 };  
 
@@ -214,11 +215,12 @@ app.get("/api/visitor-report", (req, res) => {
   console.log("GET api/visitor-report");
 
   // SQL query to retrieve visitor ticket types by first name, last name, and age
-  const ticketType = req.query.ticket_type;
+  const ticketType = req.query.ticket;
+  console.log(req.query.ticket);
   var sql_call = `
     SELECT first_name, last_name, age
     FROM VISITOR
-    WHERE ticket_type = 2
+    WHERE ticket_type = ${req.query.ticket}
   `;
 
   //sql_call += ticketType;
