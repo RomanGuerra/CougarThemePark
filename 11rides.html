@@ -282,28 +282,30 @@
         </div>
 
         <div id="sort-menu" class="dropdown me-2">
-          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="sort-button" data-bs-toggle="dropdown" aria-expanded="false">
             Sort By: None
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li><a class="dropdown-item update-data" href="#">Action</a></li>
-            <li><a class="dropdown-item update-data" href="#">Another action</a></li>
-            <li><a class="dropdown-item update-data" href="#">Something else here</a></li>
+            <li><a id="no-sort" class="dropdown-item update-data" href="#">None</a></li>
+            <li><a id="op-sort" class="dropdown-item update-data" href="#">Operation Count</a></li>
+            <li><a id="ride-sort" class="dropdown-item update-data" href="#">Rider Count</a></li>
+            <li><a id="name-a-z-sort" class="dropdown-item update-data" href="#">Name A-Z</a></li>
+            <li><a id="name-z-a-sort" class="dropdown-item update-data" href="#">Name Z-A</a></li>
           </ul>
         </div>
 
         <div id="filter-menu" class="dropdown me-2">
-          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="filter-button" data-bs-toggle="dropdown" aria-expanded="false">
             Filter By: None
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li><a id="annual" class="dropdown-item update-data" href="#">Annual</a></li>
-            <li><a id="quarterly" class="dropdown-item update-data" href="#">Quarter</a></li>
-            <li><a id="weekly" class="dropdown-item update-data" href="#">Week</a></li>
-            <li><a id="weekly" class="dropdown-item update-data" href="#">Day</a></li>
+            <li><a id="no-filter" class="dropdown-item update-data" href="#">None</a></li>
+            <li><a id="top-rider" class="dropdown-item update-data" href="#">Top 10 Rider Count</a></li>
+            <li><a id="top-op" class="dropdown-item update-data" href="#">Top 10 Operation Count</a></li>
+            <li><a id="bottom-rider" class="dropdown-item update-data" href="#">Bottom 10 Rider Count</a></li>
+            <li><a id="bottom-op" class="dropdown-item update-data" href="#">Bottom 10 Operation Count</a></li>
           </ul>
         </div>
-
 
       </div>
       <div class="d-flex flex-row justify-content-between flex-wrap">
@@ -530,6 +532,40 @@
           document.getElementById("week-button").innerText = "Week: 4";
         }
 
+        // sort button
+        if (d.id == "no-sort") {
+          document.getElementById("sort-button").innerText = "Sort By: None";
+        }
+        if (d.id == "op-sort") {
+          document.getElementById("sort-button").innerText = "Sort By: Operation Count";
+        }
+        if (d.id == "ride-sort") {
+          document.getElementById("sort-button").innerText = "Sort By: Rider Count";
+        }
+        if (d.id == "name-a-z-sort") {
+          document.getElementById("sort-button").innerText = "Sort By: Name A-Z";
+        }
+        if (d.id == "name-z-a-sort") {
+          document.getElementById("sort-button").innerText = "Sort By: Name Z-A";
+        }
+
+        // op button
+        if (d.id == "no-filter") {
+          document.getElementById("filter-button").innerText = "Filter By: None";
+        }
+        if (d.id == "top-rider") {
+          document.getElementById("filter-button").innerText = "Filter By: Top 10 Rider Count";
+        }
+        if (d.id == "bottom-rider") {
+          document.getElementById("filter-button").innerText = "Filter By: Bottom 10 Rider Count";
+        }
+        if (d.id == "top-op") {
+          document.getElementById("filter-button").innerText = "Filter By: Top 10 Operation Count";
+        }
+        if (d.id == "bottom-op") {
+          document.getElementById("filter-button").innerText = "Filter By: Bottom 10 Operation Count";
+        }
+
         // refresh data
         refreshData();
       })
@@ -635,7 +671,34 @@
       if (employee_count_growth < 0) {
         elements[2].classList.add("text-danger");
       }
+    }
 
+    function sortData(data) {
+      if (document.getElementById("sort-button").innerText == "Sort By: Operation Count") {
+        data.sort((a, b) => {
+          return b[3] < a[3] ? 1
+               : b[3] > a[3] ? -1
+               : 0;
+        });
+      } else if (document.getElementById("sort-button").innerText == "Sort By: Rider Count") {
+        data.sort((a, b) => {
+          return b[2] < a[2] ? 1
+               : b[2] > a[2] ? -1
+               : 0;          
+        })
+      } else if (document.getElementById("sort-button").innerText == "Sort By: Name A-Z") { 
+        data.sort((a, b) => {
+          return b[1] < a[1] ? 1
+               : b[1] > a[1] ? -1
+               : 0;          
+        })
+      } else if (document.getElementById("sort-button").innerText == "Sort By: Name Z-A") { 
+        data.sort((a, b) => {
+          return b[1] > a[1] ? 1
+               : b[1] < a[1] ? -1
+               : 0;          
+        })
+      }
     }
 
     async function refreshData() {
@@ -667,6 +730,8 @@
                         document.querySelectorAll(".vs-date").forEach(e => {
                           e.innerText = "vs prev. year"
                         })
+                        sortData(rideCountJson);
+                        sortData(rideCountPrevJson);
                         updateHTML(rideCountJson, employeCountJson, rideCountPrevJson, employeeCountPrevJson);
                       })
                   })
@@ -686,6 +751,8 @@
           e.innerText = "vs prev. quarter"
         })
 
+        sortData(rideCountJson);
+        sortData(rideCountPrevJson);
         updateHTML(rideCountJson, employeCountJson, rideCountPrevJson, employeeCountPrevJson);
 
       } else if (args["time"] == "Time Period: Month") {
@@ -702,6 +769,8 @@
           e.innerText = "vs prev. month"
         })
 
+        sortData(rideCountJson);
+        sortData(rideCountPrevJson);
         updateHTML(rideCountJson, employeCountJson, rideCountPrevJson, employeeCountPrevJson);
 
       } else if (args["time"] == "Time Period: Week") {
@@ -718,6 +787,8 @@
           e.innerText = "vs prev. week"
         })
 
+        sortData(rideCountJson);
+        sortData(rideCountPrevJson);
         updateHTML(rideCountJson, employeCountJson, rideCountPrevJson, employeeCountPrevJson);
       }
     }
@@ -729,7 +800,7 @@
             quarter: document.getElementById("quarter-button").innerText.trim(),
             month: document.getElementById("month-button").innerText.trim(),
             week: document.getElementById("week-button").innerText.trim(),
-            // order: document.getElementById("order").innerText
+            filter: document.getElementById("filter-button").innerText.trim()
         };
     }
     function getDocumentArgsPrevTimePeriod() {
@@ -739,7 +810,7 @@
             quarter: document.getElementById("quarter-button").innerText.trim(),
             month: document.getElementById("month-button").innerText.trim(),
             week: document.getElementById("week-button").innerText.trim(),
-            // order: document.getElementById("order").innerText
+            filter: document.getElementById("filter-button").innerText.trim()
         };
         if (args["time"] == "Time Period: Year") {
           var prev_year = parseInt(args["year"].split(" ").pop()) - 1;
@@ -836,7 +907,6 @@
         }
         return args;
     }
-
 
     refreshData();
 

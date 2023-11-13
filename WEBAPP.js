@@ -76,8 +76,25 @@ app.get("/api/ride-count/year", (req, res) => {
   console.log("GET /api/ride-count/year");
   var year = (req.query.year.split(" ")).pop()
   where_clause = `WHERE YEAR(date) = ${year}`;
+
+  var top_clause = ``;
+  var order_by_clause = ``;
+  if (req.query.filter == "Filter By: Top 10 Rider Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY w.visitor_count DESC`;
+  } else if (req.query.filter == "Filter By: Bottom 10 Rider Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY w.visitor_count ASC`;
+  } else if (req.query.filter == "Filter By: Top 10 Operation Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY ride_operations_count DESC`;
+  } else if (req.query.filter == "Filter By: Bottom 10 Operation Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY ride_operations_count ASC`;
+  }
+
   var ride_statistics_query = `
-    SELECT
+    SELECT ${top_clause}
       w.ride_ID,
       RIDE.ride_name,
       w.visitor_count,
@@ -118,6 +135,7 @@ app.get("/api/ride-count/year", (req, res) => {
     LEFT OUTER JOIN RIDE
     on
       RIDE.ride_ID = w.ride_ID
+    ${order_by_clause};
   `
 
   executeStatement(ride_statistics_query, (ride_stat_rows) => {
@@ -146,8 +164,25 @@ app.get("/api/ride-count/quarter", (req, res) => {
   }
 
   where_clause = `WHERE MONTH(date) BETWEEN ${m1} AND ${m2} AND YEAR(date) = ${year}`;
+
+  var top_clause = ``;
+  var order_by_clause = ``;
+  if (req.query.filter == "Filter By: Top 10 Rider Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY w.visitor_count DESC`;
+  } else if (req.query.filter == "Filter By: Bottom 10 Rider Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY w.visitor_count ASC`;
+  } else if (req.query.filter == "Filter By: Top 10 Operation Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY ride_operations_count DESC`;
+  } else if (req.query.filter == "Filter By: Bottom 10 Operation Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY ride_operations_count ASC`;
+  }
+
   var ride_statistics_query = `
-    SELECT
+    SELECT ${top_clause}
       w.ride_ID,
       RIDE.ride_name,
       w.visitor_count,
@@ -188,6 +223,7 @@ app.get("/api/ride-count/quarter", (req, res) => {
     LEFT OUTER JOIN RIDE
     on
       RIDE.ride_ID = w.ride_ID
+    ${order_by_clause};
   `
 
   executeStatement(ride_statistics_query, (ride_stat_rows) => {
@@ -213,8 +249,25 @@ app.get("/api/ride-count/month", (req,res) => {
     "December": 12
   };
   where_clause = `WHERE MONTH(date) = ${mapping[month]} AND YEAR(date) = ${year}`;
+
+  var top_clause = ``;
+  var order_by_clause = ``;
+  if (req.query.filter == "Filter By: Top 10 Rider Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY w.visitor_count DESC`;
+  } else if (req.query.filter == "Filter By: Bottom 10 Rider Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY w.visitor_count ASC`;
+  } else if (req.query.filter == "Filter By: Top 10 Operation Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY ride_operations_count DESC`;
+  } else if (req.query.filter == "Filter By: Bottom 10 Operation Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY ride_operations_count ASC`;
+  }
+
   var ride_statistics_query = `
-    SELECT
+    SELECT ${top_clause}
       w.ride_ID,
       RIDE.ride_name,
       w.visitor_count,
@@ -255,6 +308,7 @@ app.get("/api/ride-count/month", (req,res) => {
     LEFT OUTER JOIN RIDE
     on
       RIDE.ride_ID = w.ride_ID
+    ${order_by_clause};
   `
 
   executeStatement(ride_statistics_query, (ride_stat_rows) => {
@@ -315,8 +369,25 @@ app.get("/api/ride-count/week", (req,res) => {
   var date1 = year + "-" + mapping[month] + "-" + d1;
   var date2 = year + "-" + mapping[month] + "-" + d2;
   where_clause = `WHERE CAST([date] AS DATE) BETWEEN '${date1}' AND '${date2}'`;
+
+  var top_clause = ``;
+  var order_by_clause = ``;
+  if (req.query.filter == "Filter By: Top 10 Rider Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY w.visitor_count DESC`;
+  } else if (req.query.filter == "Filter By: Bottom 10 Rider Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY w.visitor_count ASC`;
+  } else if (req.query.filter == "Filter By: Top 10 Operation Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY ride_operations_count DESC`;
+  } else if (req.query.filter == "Filter By: Bottom 10 Operation Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY ride_operations_count ASC`;
+  }
+
   var ride_statistics_query = `
-    SELECT
+    SELECT ${top_clause}
       w.ride_ID,
       RIDE.ride_name,
       w.visitor_count,
@@ -357,6 +428,7 @@ app.get("/api/ride-count/week", (req,res) => {
     LEFT OUTER JOIN RIDE
     on
       RIDE.ride_ID = w.ride_ID
+    ${order_by_clause};
   `
 
   executeStatement(ride_statistics_query, (ride_stat_rows) => {
