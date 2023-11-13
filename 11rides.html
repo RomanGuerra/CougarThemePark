@@ -313,7 +313,7 @@
           </div>
           <h1 id="total-rider-count" class="p-2 pb-0 m-0" style="font-size: 3.5rem;">121</h1>
           <div class="d-flex flex-column align-items-center">
-            <h6 class="p-2 pb-0 m-0 text-success">+21%</h6>
+            <h6 id="ride-growth" class="p-2 pb-0 m-0 text-success">+21%</h6>
             <small class="text-muted vs-date">vs prev. month</small>
           </div>
         </div>
@@ -323,7 +323,7 @@
           </div>
           <h1 id="total-operation-count" class="p-2 pb-0 m-0" style="font-size: 3.5rem;">53</h1>
           <div class="d-flex flex-column align-items-center">
-            <h6 class="p-2 pb-0 m-0 ">+0%</h6>
+            <h6 id="op-growth" class="p-2 pb-0 m-0 ">+0%</h6>
             <small class="text-muted vs-date">vs prev. month</small>
           </div>
         </div>
@@ -333,7 +333,7 @@
           </div>
           <h1 id="employee-count-total" class="p-2 pb-0 m-0" style="font-size: 3.5rem;">10</h1>
           <div class="d-flex flex-column align-items-center">
-            <h6 class="p-2 pb-0 m-0 text-danger">-13%</h6>
+            <h6 id="employee-growth" class="p-2 pb-0 m-0 text-danger">-13%</h6>
             <small class="text-muted vs-date">vs prev. month</small>
           </div>
         </div>
@@ -535,7 +535,7 @@
       })
     });
 
-    function updateHTML(rideCountJson, employeCountJson) {
+    function updateHTML(rideCountJson, employeeCountJson, rideCountPrevJson, employeeCountPrevJson) {
       var total_ride_count = 0;
       var total_operation_count = 0;
 
@@ -565,22 +565,82 @@
       document.getElementById("total-rider-count").innerHTML = total_ride_count;
       document.getElementById("total-operation-count").innerHTML = total_operation_count;
 
-      console.log(employeCountJson);
-      for (var r of employeCountJson) {
+      console.log(employeeCountJson);
+      var uniqueEmployeeCount = 0;
+      for (var r of employeeCountJson) {
         // boxes
-        document.getElementById("employee-count-total").innerText = r[0];
+        uniqueEmployeeCount = r[0];
+        document.getElementById("employee-count-total").innerText = uniqueEmployeeCount;
       }
       
       // graphs
       opCountChart.update();
       rideCountChart.update();
-      console.log("hsalkjfjd");
+
+      // calculate change over time period
+      var total_prev_ride_count = 0;
+      var total_prev_op_count = 0;
+      for (var r of rideCountPrevJson) {
+        total_prev_ride_count += r[2]
+        total_prev_op_count += r[3];
+      }
+
+      var uniqueEmployeeCountPrev = 0;
+      for (var r of employeeCountPrevJson) {
+        uniqueEmployeeCountPrev = r[0];
+      }
+
+      var ride_count_growth = 0;
+      var op_count_growth = 0;
+      var employee_count_growth = 0;
+
+      if (total_prev_ride_count !== 0) {
+        ride_count_growth = (total_ride_count - total_prev_ride_count) / total_prev_ride_count * 100.0;
+      }
+      if (total_prev_op_count !== 0) {
+        op_count_growth = (total_operation_count - total_prev_op_count) / total_prev_op_count * 100.0;
+      }
+      if (uniqueEmployeeCountPrev !== 0) {
+        employee_count_growth = (uniqueEmployeeCount - uniqueEmployeeCountPrev) / uniqueEmployeeCountPrev * 100.0;
+      }
+
+      document.getElementById("ride-growth").innerText = `${Math.round(ride_count_growth)}%`;
+      document.getElementById("op-growth").innerText = `${Math.round(op_count_growth)}%`;
+      document.getElementById("employee-growth").innerText = `${Math.round(employee_count_growth)}%`;
+
+      var elements = [document.getElementById("ride-growth"), document.getElementById("op-growth"), 
+        document.getElementById("employee-growth")]
+      for (var el of elements) {
+        el.classList.remove("text-danger");
+        el.classList.remove("text-success");
+      }
+
+      if (ride_count_growth > 0) {
+        elements[0].classList.add("text-success");
+      }
+      if (ride_count_growth < 0) {
+        elements[0].classList.add("text-danger");
+      }
+
+      if (op_count_growth > 0) {
+        elements[1].classList.add("text-success");
+      }
+      if (op_count_growth < 0) {
+        elements[1].classList.add("text-danger");
+      }
+
+      if (employee_count_growth > 0) {
+        elements[2].classList.add("text-success");
+      }
+      if (employee_count_growth < 0) {
+        elements[2].classList.add("text-danger");
+      }
 
     }
 
-    function refreshData() {
+    async function refreshData() {
       var args = getDocumentArgs();
-      var prev_time_args = getDocumentArgs();
+      var prev_time_args = getDocumentArgsPrevTimePeriod();
 
       console.log(args["time"]);
       if (args["time"] == "Time Period: Year") {
@@ -594,64 +654,71 @@
                 return res2.json()
               })
               .then(employeCountJson => {
-                document.querySelectorAll(".vs-date").forEach(e => {
-                  e.innerText = "vs prev. year"
+                fetch("/api/ride-count/year?" + new URLSearchParams(args))
+                  .then(res3 => {
+                    return res3.json();
+                  })
+                  .then(rideCountPrevJson => {
+                    fetch("/api/employee-count-ride-operations?" + new URLSearchParams(args))
+                      .then(res4 => {
+                        return res4.json();
+                      })
+                      .then(employeeCountPrevJson => {
+                        document.querySelectorAll(".vs-date").forEach(e => {
+                          e.innerText = "vs prev. year"
+                        })
+                        updateHTML(rideCountJson, employeCountJson, rideCountPrevJson, employeeCountPrevJson);
+                      })
+                  })
                 })
-                updateHTML(rideCountJson, employeCountJson);
               })
-          })
-
       } else if (args["time"] == "Time Period: Quarter") {
-        fetch("/api/ride-count/quarter?" + new URLSearchParams(args))
-          .then(res => {
-            return res.json()
-          })
-          .then(rideCountJson => {
-            fetch("/api/employee-count-ride-operations?" + new URLSearchParams(args))
-              .then((res2) => {
-                return res2.json()
-              })
-              .then(employeCountJson => {
-                document.querySelectorAll(".vs-date").forEach(e => {
-                  e.innerText = "vs prev. quarter"
-                })
-                updateHTML(rideCountJson, employeCountJson);
-              })
-          })
+        var res = await fetch("/api/ride-count/quarter?" + new URLSearchParams(args));
+        var rideCountJson = await res.json();
+        var res2 = await fetch("/api/employee-count-ride-operations?" + new URLSearchParams(args))
+        var employeCountJson = await res2.json();
+        var res3 = await fetch("/api/ride-count/quarter?" + new URLSearchParams(prev_time_args));
+        var rideCountPrevJson = await res3.json();
+        var res4 = await fetch("/api/employee-count-ride-operations?" + new URLSearchParams(prev_time_args))
+        var employeeCountPrevJson = await res4.json();
+        
+        document.querySelectorAll(".vs-date").forEach(e => {
+          e.innerText = "vs prev. quarter"
+        })
+
+        updateHTML(rideCountJson, employeCountJson, rideCountPrevJson, employeeCountPrevJson);
+
       } else if (args["time"] == "Time Period: Month") {
-        fetch("/api/ride-count/month?" + new URLSearchParams(args))
-          .then(res => {
-            return res.json()
-          })
-          .then(rideCountJson => {
-            fetch("/api/employee-count-ride-operations?" + new URLSearchParams(args))
-              .then((res2) => {
-                return res2.json()
-              })
-              .then(employeCountJson => {
-                document.querySelectorAll(".vs-date").forEach(e => {
-                  e.innerText = "vs prev. month"
-                })
-                updateHTML(rideCountJson, employeCountJson);
-              })
-          })
+        var res = await fetch("/api/ride-count/month?" + new URLSearchParams(args));
+        var rideCountJson = await res.json();
+        var res2 = await fetch("/api/employee-count-ride-operations?" + new URLSearchParams(args))
+        var employeCountJson = await res2.json();
+        var res3 = await fetch("/api/ride-count/month?" + new URLSearchParams(prev_time_args));
+        var rideCountPrevJson = await res3.json();
+        var res4 = await fetch("/api/employee-count-ride-operations?" + new URLSearchParams(prev_time_args))
+        var employeeCountPrevJson = await res4.json();
+
+        document.querySelectorAll(".vs-date").forEach(e => {
+          e.innerText = "vs prev. month"
+        })
+
+        updateHTML(rideCountJson, employeCountJson, rideCountPrevJson, employeeCountPrevJson);
+
       } else if (args["time"] == "Time Period: Week") {
-        fetch("/api/ride-count/week?" + new URLSearchParams(args))
-          .then(res => {
-            return res.json()
-          })
-          .then(rideCountJson => {
-            fetch("/api/employee-count-ride-operations?" + new URLSearchParams(args))
-              .then((res2) => {
-                return res2.json()
-              })
-              .then(employeCountJson => {
-                document.querySelectorAll(".vs-date").forEach(e => {
-                  e.innerText = "vs prev. week"
-                })
-                updateHTML(rideCountJson, employeCountJson);
-              })
-          })
+        var res = await fetch("/api/ride-count/week?" + new URLSearchParams(args));
+        var rideCountJson = await res.json();
+        var res2 = await fetch("/api/employee-count-ride-operations?" + new URLSearchParams(args))
+        var employeCountJson = await res2.json();
+        var res3 = await fetch("/api/ride-count/week?" + new URLSearchParams(prev_time_args));
+        var rideCountPrevJson = await res3.json();
+        var res4 = await fetch("/api/employee-count-ride-operations?" + new URLSearchParams(prev_time_args))
+        var employeeCountPrevJson = await res4.json();
+
+        document.querySelectorAll(".vs-date").forEach(e => {
+          e.innerText = "vs prev. week"
+        })
+
+        updateHTML(rideCountJson, employeCountJson, rideCountPrevJson, employeeCountPrevJson);
       }
     }
 
@@ -665,7 +732,7 @@
             // order: document.getElementById("order").innerText
         };
     }
-    function getDocumentArgsPrevDate() {
+    function getDocumentArgsPrevTimePeriod() {
         var args = {
             time: document.getElementById("time-button").innerText.trim(),
             year: document.getElementById("year-button").innerText.trim(),
@@ -757,15 +824,17 @@
           var prev_year = parseInt(args["year"].split(" ").pop());
           if (prev_week == 0) {
             prev_week = 4;
+            prev_month -= 1;
           }
           if (prev_month == 0) {
             prev_year -= 1;
+            prev_month = 12;
           }
           args["year"] = `Year: ${prev_year}`
           args["month"] = `Month: ${reverseMapping[prev_month]}`
           args["week"] = `Week: ${prev_week}`
         }
-
+        return args;
     }
 
 

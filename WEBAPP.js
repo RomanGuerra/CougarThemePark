@@ -314,7 +314,7 @@ app.get("/api/ride-count/week", (req,res) => {
 
   var date1 = year + "-" + mapping[month] + "-" + d1;
   var date2 = year + "-" + mapping[month] + "-" + d2;
-  where_clause = `WHERE date BETWEEN '${date1}' AND '${date2}'`;
+  where_clause = `WHERE CAST([date] AS DATE) BETWEEN '${date1}' AND '${date2}'`;
   var ride_statistics_query = `
     SELECT
       w.ride_ID,
@@ -358,8 +358,6 @@ app.get("/api/ride-count/week", (req,res) => {
     on
       RIDE.ride_ID = w.ride_ID
   `
-
-  console.log(ride_statistics_query);
 
   executeStatement(ride_statistics_query, (ride_stat_rows) => {
     res.json(ride_stat_rows);
