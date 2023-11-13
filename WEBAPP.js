@@ -42,7 +42,7 @@ var Request = require('tedious').Request;
 var TYPES = require('tedious').TYPES;  
 
 function executeStatement(sql, callback) {  
-    var request = new Request(sql, (e, r, row) => {});
+  var request = new Request(sql, (e, r, row) => {});
 
     _rows = [];
 
@@ -72,42 +72,393 @@ app.get("/api/employees", (req, res) => {
   });
 });
 
-app.get("/api/ride-count", (req, res) => {
-  console.log("GET api/ride-count");
-
-  // `SELECT RIDE.ride_name, B.ride_ID, B.ride_count, RIDE.p_location FROM (
-  //   SELECT ride_ID, COUNT(*) AS ride_count FROM dbo.RIDE_OPERATION
-  //   WHERE YEAR(date) = ${req.query.year}
-  //   GROUP BY ride_ID
-  // ) AS B
-  // INNER JOIN RIDE ON RIDE.ride_ID = B.ride_ID
-  // ORDER BY ride_count ASC;
-  // `
-
-  var sql_call = `SELECT RIDE.ride_name, B.ride_ID, B.ride_count, RIDE.p_location FROM (
-    SELECT ride_ID, COUNT(*) AS ride_count FROM dbo.RIDE_OPERATION
+app.get("/api/ride-count/year", (req, res) => {
+  console.log("GET /api/ride-count/year");
+  var year = (req.query.year.split(" ")).pop()
+  where_clause = `WHERE YEAR(date) = ${year}`;
+  var ride_statistics_query = `
+    SELECT
+      w.ride_ID,
+      RIDE.ride_name,
+      w.visitor_count,
+      ride_operations_count
+    FROM
+      (
+      SELECT
+        R.ride_ID,
+        P.visitor_count,
+        R.operation_count as ride_operations_count
+      FROM
+        (
+        SELECT
+          Z.ride_ID,
+          COUNT(Z.ride_ID) as operation_count
+        FROM
+          RIDE_OPERATION AS Z
+        ${where_clause}
+        GROUP BY
+          Z.ride_ID
+    ) as R
+      LEFT OUTER JOIN (
+        SELECT
+          Q.ride_ID ,
+          COUNT(V.vistor_id) as visitor_count
+        FROM
+          RIDE_OPERATION as Q
+        LEFT OUTER JOIN Visitor_event as V
+        ON
+          V.events_id = Q.event_ID
+        ${where_clause}
+        GROUP BY
+          Q.ride_ID
+    ) as P
+    ON
+        P.ride_ID = R.ride_ID
+    ) as w
+    LEFT OUTER JOIN RIDE
+    on
+      RIDE.ride_ID = w.ride_ID
   `
-  if (req.query.month == 0) {
-    sql_call += `WHERE YEAR(date) = ${req.query.year}`
+
+  executeStatement(ride_statistics_query, (ride_stat_rows) => {
+    res.json(ride_stat_rows);
+  })
+})
+
+app.get("/api/ride-count/quarter", (req, res) => {
+  var year = (req.query.year.split(" ")).pop()
+  var qtr = req.query.quarter.split(" ").pop();
+  var m1 = ``;
+  var m2 = ``;
+
+  if (qtr == "Q1") {
+    m1 = 1;
+    m2 = 3;
+  } else if (qtr == "Q2") {
+    m1 = 4;
+    m2 = 6;
+  } else if (qtr == "Q3") {
+    m1 = 7;
+    m2 = 9;
+  } else if (qtr == "Q4") {
+    m1 = 10;
+    m2 = 12;
+  }
+
+  where_clause = `WHERE MONTH(date) BETWEEN ${m1} AND ${m2} AND YEAR(date) = ${year}`;
+  var ride_statistics_query = `
+    SELECT
+      w.ride_ID,
+      RIDE.ride_name,
+      w.visitor_count,
+      ride_operations_count
+    FROM
+      (
+      SELECT
+        R.ride_ID,
+        P.visitor_count,
+        R.operation_count as ride_operations_count
+      FROM
+        (
+        SELECT
+          Z.ride_ID,
+          COUNT(Z.ride_ID) as operation_count
+        FROM
+          RIDE_OPERATION AS Z
+        ${where_clause}
+        GROUP BY
+          Z.ride_ID
+    ) as R
+      LEFT OUTER JOIN (
+        SELECT
+          Q.ride_ID ,
+          COUNT(V.vistor_id) as visitor_count
+        FROM
+          RIDE_OPERATION as Q
+        LEFT OUTER JOIN Visitor_event as V
+        ON
+          V.events_id = Q.event_ID
+        ${where_clause}
+        GROUP BY
+          Q.ride_ID
+    ) as P
+    ON
+        P.ride_ID = R.ride_ID
+    ) as w
+    LEFT OUTER JOIN RIDE
+    on
+      RIDE.ride_ID = w.ride_ID
+  `
+
+  executeStatement(ride_statistics_query, (ride_stat_rows) => {
+    res.json(ride_stat_rows);
+  })
+})
+
+app.get("/api/ride-count/month", (req,res) => {
+  var year = (req.query.year.split(" ")).pop()
+  var month = req.query.month.split(" ").pop();
+  var mapping = {
+    "January": 1,
+    "February": 2,
+    "March": 3,
+    "April": 4,
+    "May": 5,
+    "June": 6,
+    "July": 7,
+    "August": 8,
+    "September": 9,
+    "October": 10,
+    "November": 11,
+    "December": 12
+  };
+  where_clause = `WHERE MONTH(date) = ${mapping[month]} AND YEAR(date) = ${year}`;
+  var ride_statistics_query = `
+    SELECT
+      w.ride_ID,
+      RIDE.ride_name,
+      w.visitor_count,
+      ride_operations_count
+    FROM
+      (
+      SELECT
+        R.ride_ID,
+        P.visitor_count,
+        R.operation_count as ride_operations_count
+      FROM
+        (
+        SELECT
+          Z.ride_ID,
+          COUNT(Z.ride_ID) as operation_count
+        FROM
+          RIDE_OPERATION AS Z
+        ${where_clause}
+        GROUP BY
+          Z.ride_ID
+    ) as R
+      LEFT OUTER JOIN (
+        SELECT
+          Q.ride_ID ,
+          COUNT(V.vistor_id) as visitor_count
+        FROM
+          RIDE_OPERATION as Q
+        LEFT OUTER JOIN Visitor_event as V
+        ON
+          V.events_id = Q.event_ID
+        ${where_clause}
+        GROUP BY
+          Q.ride_ID
+    ) as P
+    ON
+        P.ride_ID = R.ride_ID
+    ) as w
+    LEFT OUTER JOIN RIDE
+    on
+      RIDE.ride_ID = w.ride_ID
+  `
+
+  executeStatement(ride_statistics_query, (ride_stat_rows) => {
+    res.json(ride_stat_rows);
+  })
+})
+
+app.get("/api/ride-count/week", (req,res) => {
+  var year = (req.query.year.split(" ")).pop()
+  var month = req.query.month.split(" ").pop();
+  var wk = req.query.week.split(" ").pop();
+
+  var daysInMonth = {
+    "January": 31,
+    "February": 28, // Note: Leap year handling is not included in this simple example
+    "March": 31,
+    "April": 30,
+    "May": 31,
+    "June": 30,
+    "July": 31,
+    "August": 31,
+    "September": 30,
+    "October": 31,
+    "November": 30,
+    "December": 31
+  };
+  var mapping = {
+    "January": 1,
+    "February": 2,
+    "March": 3,
+    "April": 4,
+    "May": 5,
+    "June": 6,
+    "July": 7,
+    "August": 8,
+    "September": 9,
+    "October": 10,
+    "November": 11,
+    "December": 12
+  };
+  var d1;
+  var d2;
+  var ddiff = Math.ceil(daysInMonth[month] / 4);
+  if (wk == 1) {
+    d1 = 1;
+    d2 = d1 + 6;
+  } else if (wk == 2) {
+    d1 = 8;
+    d2 = d1 + 6;
+  } else if (wk == 3) {
+    d1 = 15;
+    d2 = d1 + 6;
   } else {
-    sql_call += `WHERE YEAR(date) = ${req.query.year} AND MONTH(date) = ${req.query.month}`
+    d1 = 21;
+    d2 = daysInMonth[month];
   }
-  sql_call += `
-      GROUP BY ride_ID
-    ) AS B
-    INNER JOIN RIDE ON RIDE.ride_ID = B.ride_ID
-  `;
 
-  if (req.query.order === "ride_op_dsc") {
-    sql_call += "ORDER BY ride_count DESC";
-  }
-  if (req.query.order === "ride_op_asc") {
-    sql_call += "ORDER BY ride_count ASC"
-  }
-  sql_call += ";";
+  var date1 = year + "-" + mapping[month] + "-" + d1;
+  var date2 = year + "-" + mapping[month] + "-" + d2;
+  where_clause = `WHERE date BETWEEN '${date1}' AND '${date2}'`;
+  var ride_statistics_query = `
+    SELECT
+      w.ride_ID,
+      RIDE.ride_name,
+      w.visitor_count,
+      ride_operations_count
+    FROM
+      (
+      SELECT
+        R.ride_ID,
+        P.visitor_count,
+        R.operation_count as ride_operations_count
+      FROM
+        (
+        SELECT
+          Z.ride_ID,
+          COUNT(Z.ride_ID) as operation_count
+        FROM
+          RIDE_OPERATION AS Z
+        ${where_clause}
+        GROUP BY
+          Z.ride_ID
+    ) as R
+      LEFT OUTER JOIN (
+        SELECT
+          Q.ride_ID ,
+          COUNT(V.vistor_id) as visitor_count
+        FROM
+          RIDE_OPERATION as Q
+        LEFT OUTER JOIN Visitor_event as V
+        ON
+          V.events_id = Q.event_ID
+        ${where_clause}
+        GROUP BY
+          Q.ride_ID
+    ) as P
+    ON
+        P.ride_ID = R.ride_ID
+    ) as w
+    LEFT OUTER JOIN RIDE
+    on
+      RIDE.ride_ID = w.ride_ID
+  `
 
-  executeStatement(sql_call, (rows) => {
-    res.json(rows);
+  console.log(ride_statistics_query);
+
+  executeStatement(ride_statistics_query, (ride_stat_rows) => {
+    res.json(ride_stat_rows);
+  })
+})
+
+app.get("/api/employee-count-ride-operations", (req, res) => {
+  console.log("GET /api/employee-count-ride-operations");
+  var where_clause = ``;
+  if (req.query.time == "Time Period: Year") {
+    var year = (req.query.year.split(" ")).pop()
+    where_clause = `WHERE YEAR(date) = ${year}`;
+  } else if (req.query.time == "Time Period: Quarter") {
+    var qtr = req.query.quarter.split(" ").pop();
+    var year = (req.query.year.split(" ")).pop()
+    var m1 = ``;
+    var m2 = ``;
+
+    if (qtr == "Q1") {
+      m1 = 1;
+      m2 = 3;
+    } else if (qtr == "Q2") {
+      m1 = 4;
+      m2 = 6;
+    } else if (qtr == "Q3") {
+      m1 = 7;
+      m2 = 9;
+    } else if (qtr == "Q4") {
+      m1 = 10;
+      m2 = 12;
+    }
+
+    where_clause = `WHERE MONTH(date) BETWEEN ${m1} AND ${m2} AND YEAR(date) = ${year}`;
+  } else if (req.query.time == "Time Period: Month") {
+    var year = (req.query.year.split(" ")).pop()
+    var month = req.query.month.split(" ").pop();
+    var mapping = {
+      "January": 1,
+      "February": 2,
+      "March": 3,
+      "April": 4,
+      "May": 5,
+      "June": 6,
+      "July": 7,
+      "August": 8,
+      "September": 9,
+      "October": 10,
+      "November": 11,
+      "December": 12
+    };
+    where_clause = `WHERE MONTH(date) = ${mapping[month]} AND YEAR(date) = ${year}`;
+  } else if (req.query.time == "Time Period: Week") {
+    var year = (req.query.year.split(" ")).pop()
+    var month = req.query.month.split(" ").pop();
+    var wk = req.query.week.split(" ").pop();
+
+    var daysInMonth = {
+      "January": 31,
+      "February": 28, // Note: Leap year handling is not included in this simple example
+      "March": 31,
+      "April": 30,
+      "May": 31,
+      "June": 30,
+      "July": 31,
+      "August": 31,
+      "September": 30,
+      "October": 31,
+      "November": 30,
+      "December": 31
+    };
+    var d1;
+    var d2;
+    var ddiff = Math.ceil(daysInMonth[month] / 4);
+    if (wk == 1) {
+      d1 = 1;
+      d2 = d1 + ddiff;
+    } else if (wk == 2) {
+      d1 = 2 + ddiff;
+      d2 = d1 + ddiff;
+    } else if (wk == 3) {
+      d1 = 3 + ddiff * 2;
+      d2 = d1 + ddiff;
+    } else {
+      d1 = 4 + ddiff * 3;
+      d2 = daysInMonth[month];
+    }
+
+    var date1 = year + "-" + month + "-" + d1;
+    var date2 = year + "-" + month + "-" + d2;
+    where_clause = `WHERE date BETWEEN ${date1} AND ${date2}`;
+  }
+
+  var employee_statistics_query = `
+    SELECT COUNT(DISTINCT employee_ID) FROM RIDE_OPERATION
+    ${where_clause};
+  `
+  
+  executeStatement(employee_statistics_query, (employee_stat_rows) => {
+    res.json(employee_stat_rows)
   })
 })
 

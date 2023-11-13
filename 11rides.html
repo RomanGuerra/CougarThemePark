@@ -214,90 +214,141 @@
       <h2 class="mb-0 p-0">Ride Count Report</h2>
       <p>Statistics on ride usage, ride operations, and employee supervision activity</p>
       <div class="d-flex flex-row ">
-        <div class="dropdown me-2">
-          <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-            Time: Annual
+
+        <div id="time-menu" class="dropdown me-2">
+          <button class="btn btn-primary dropdown-toggle" type="button" id="time-button" data-bs-toggle="dropdown" aria-expanded="false">
+            Time Period: Year
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
+            <li><a id="year" class="dropdown-item update-data" href="#">Year</a></li>
+            <li><a id="quarter" class="dropdown-item update-data" href="#">Quarter</a></li>
+            <li><a id="month" class="dropdown-item update-data" href="#">Month</a></li>
+            <li><a id="week" class="dropdown-item update-data" href="#">Week</a></li>
           </ul>
         </div>
-        <div class="dropdown me-2">
-          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-            Time Period: 2023
+
+        <div id="year-menu" class="dropdown me-2">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="year-button" data-bs-toggle="dropdown" aria-expanded="false">
+            Year: 2023
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
+            <li><a id="2022" class="dropdown-item update-data" href="#">2022</a></li>
+            <li><a id="2023" class="dropdown-item update-data" href="#">2023</a></li>
           </ul>
         </div>
-        <div class="dropdown me-2">
+
+        <div id="quarter-menu" class="dropdown me-2">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="quarter-button" data-bs-toggle="dropdown" aria-expanded="false">
+            Quarter: Q1
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li><a id="q1" class="dropdown-item update-data" href="#">Q1</a></li>
+            <li><a id="q2" class="dropdown-item update-data" href="#">Q2</a></li>
+            <li><a id="q3" class="dropdown-item update-data" href="#">Q3</a></li>
+            <li><a id="q4" class="dropdown-item update-data" href="#">Q4</a></li>
+          </ul>
+        </div>
+
+        <div id="month-menu" class="dropdown me-2">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="month-button" data-bs-toggle="dropdown" aria-expanded="false">
+            Month: January
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li><a id="january" class="dropdown-item update-data" href="#">January</a></li>
+            <li><a id="february" class="dropdown-item update-data" href="#">February</a></li>
+            <li><a id="march" class="dropdown-item update-data" href="#">March</a></li>
+            <li><a id="april" class="dropdown-item update-data" href="#">April</a></li>
+            <li><a id="may" class="dropdown-item update-data" href="#">May</a></li>
+            <li><a id="june" class="dropdown-item update-data" href="#">June</a></li>
+            <li><a id="july" class="dropdown-item update-data" href="#">July</a></li>
+            <li><a id="august" class="dropdown-item update-data" href="#">August</a></li>
+            <li><a id="september" class="dropdown-item update-data" href="#">September</a></li>
+            <li><a id="october" class="dropdown-item update-data" href="#">October</a></li>
+            <li><a id="november" class="dropdown-item update-data" href="#">November</a></li>
+            <li><a id="december" class="dropdown-item update-data" href="#">December</a></li>
+          </ul>
+        </div>
+
+        <div id="week-menu" class="dropdown me-2">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="week-button" data-bs-toggle="dropdown" aria-expanded="false">
+            Week: 1
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li><a id="w1" class="dropdown-item update-data" href="#">Week 1</a></li>
+            <li><a id="w2" class="dropdown-item update-data" href="#">Week 2</a></li>
+            <li><a id="w3" class="dropdown-item update-data" href="#">Week 3</a></li>
+            <li><a id="w4" class="dropdown-item update-data" href="#">Week 4</a></li>
+          </ul>
+        </div>
+
+        <div id="sort-menu" class="dropdown me-2">
           <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
             Sort By: None
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
+            <li><a class="dropdown-item update-data" href="#">Action</a></li>
+            <li><a class="dropdown-item update-data" href="#">Another action</a></li>
+            <li><a class="dropdown-item update-data" href="#">Something else here</a></li>
           </ul>
         </div>
-        <div class="dropdown me-2">
+
+        <div id="filter-menu" class="dropdown me-2">
           <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
             Filter By: None
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
+            <li><a id="annual" class="dropdown-item update-data" href="#">Annual</a></li>
+            <li><a id="quarterly" class="dropdown-item update-data" href="#">Quarter</a></li>
+            <li><a id="weekly" class="dropdown-item update-data" href="#">Week</a></li>
+            <li><a id="weekly" class="dropdown-item update-data" href="#">Day</a></li>
           </ul>
         </div>
+
+
       </div>
       <div class="d-flex flex-row justify-content-between flex-wrap">
         <div class="card mb-1 m-4 p-5 d-flex flex-column justify-content-between align-items-center shadow" style="width:25%; aspect-ratio: 4 / 1;">
           <div class="">
             <h5 class="mb-0">Total Rider Count</h5>
           </div>
-          <h1 class="p-2 pb-0 m-0" style="font-size: 3.5rem;">121</h1>
+          <h1 id="total-rider-count" class="p-2 pb-0 m-0" style="font-size: 3.5rem;">121</h1>
           <div class="d-flex flex-column align-items-center">
             <h6 class="p-2 pb-0 m-0 text-success">+21%</h6>
-            <small class="text-muted">vs prev. month</small>
+            <small class="text-muted vs-date">vs prev. month</small>
           </div>
         </div>
         <div class="card mb-1 m-4 p-5 d-flex flex-column justify-content-between align-items-center shadow" style="width:25%; aspect-ratio: 4 / 1;">
           <div class="">
             <h5 class="mb-0">Ride Operations</h5>
           </div>
-          <h1 class="p-2 pb-0 m-0" style="font-size: 3.5rem;">53</h1>
+          <h1 id="total-operation-count" class="p-2 pb-0 m-0" style="font-size: 3.5rem;">53</h1>
           <div class="d-flex flex-column align-items-center">
             <h6 class="p-2 pb-0 m-0 ">+0%</h6>
-            <small class="text-muted">vs prev. month</small>
+            <small class="text-muted vs-date">vs prev. month</small>
           </div>
         </div>
         <div class="card mb-1 m-4 p-5 d-flex flex-column justify-content-between align-items-center shadow" style="width:25%; aspect-ratio: 4 / 1;">
           <div class="">
             <h5 class="mb-0">Active Employees</h5>
           </div>
-          <h1 class="p-2 pb-0 m-0" style="font-size: 3.5rem;">10</h1>
+          <h1 id="employee-count-total" class="p-2 pb-0 m-0" style="font-size: 3.5rem;">10</h1>
           <div class="d-flex flex-column align-items-center">
             <h6 class="p-2 pb-0 m-0 text-danger">-13%</h6>
-            <small class="text-muted">vs prev. month</small>
+            <small class="text-muted vs-date">vs prev. month</small>
           </div>
         </div>
 
       </div>
       <div class="d-flex flex-row justify-content-between flex-wrap">
         <div class="card m-4 p-1 d-flex flex-column align-items-center shadow" style="width:45%; ">
-          <h5>title</h5>
+          <h5>Operation Count Per Ride</h5>
           <div class="flex-grow-1" style="width: 100%;">
             <canvas id="myChart1"></canvas>
           </div>
         </div>
 
         <div class="card m-4 p-1 d-flex flex-column align-items-center shadow" style="width:45%; ">
-          <h5>title</h5>
+          <h5>Ride Popularity</h5>
           <div class="flex-grow-1" style="width:100%;">
             <canvas id="myChart2"></canvas>
           </div>
@@ -308,65 +359,24 @@
 
   <div class="b-example-divider b-example-vr"></div>
   <div class="container p-5" id="right-sidebar">                
-    <h4>Right Sidebar</h4>
-    
   </div>
 
 </main>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script type="module" src="js/connect.js"></script>
-  <script src="server.js"></script> 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    function getRideCountParams() {
-        return {
-            month: document.getElementById("month").value,
-            year: document.getElementById("year").value,
-            order: document.getElementById("order").value
-        };
-    }
-
-    function requestReport() {
-        const queryParams = getRideCountParams();
-
-        fetch("/api/ride-count?" + new URLSearchParams(queryParams))
-        .then((res) => {
-            res.json()
-            .then((json) => {
-                console.log(json);
-                
-                reportTableNode = document.getElementById("report-table");
-                reportTableNode.innerHTML = `
-                <tr>
-                    <th>Ride Name</th>
-                    <th>Ride ID</th>
-                    <th>Ride Operation Count</th>
-                    <th>Location</th>
-                </tr>
-                `;
-                for (var row of json) {
-                    var newRow = "<tr>";
-                    for (var key of Object.keys(row)) {
-                        newRow += "<td>";
-                        newRow += String(row[key]);
-                        newRow += "</td>"
-                    }
-                    newRow += "</tr>";
-                    reportTableNode.innerHTML += newRow;
-                }
-
-                document.getElementById("report").style.visibility = "visible";
-            })
-        });
-    }
+    document.getElementById("year-menu").style.display = "block";
+    document.getElementById("quarter-menu").style.display = "none";
+    document.getElementById("month-menu").style.display = "none";
+    document.getElementById("week-menu").style.display = "none";
 
     const ctx1 = document.getElementById('myChart1');
-    new Chart(ctx1, {
+    var opCountChart = new Chart(ctx1, {
       type: 'bar',
       data: {
         labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
         datasets: [{
-          label: '# of Votes',
+          label: '# of Operations',
           data: [12, 19, 3, 5, 2, 3],
           borderWidth: 1
         }]
@@ -390,7 +400,7 @@
         'Yellow'
       ],
       datasets: [{
-        label: 'My First Dataset',
+        label: '# of Visitors',
         data: [300, 50, 100],
         backgroundColor: [
           'rgb(255, 99, 132)',
@@ -408,7 +418,358 @@
         maintainAspectRatio: false,
       }
     };
-    new Chart(ctx2, config);
+    var rideCountChart = new Chart(ctx2, config);
+
+    var dropdownItems = document.querySelectorAll(".update-data")
+    dropdownItems.forEach((d, count, parent) => {
+      d.addEventListener('click', (e) => {
+        if (d.id == "year") {
+          document.getElementById("time-button").innerText = "Time Period: Year";
+
+          document.getElementById("year-menu").style.display = "block";
+          document.getElementById("quarter-menu").style.display = "none";
+          document.getElementById("month-menu").style.display = "none";
+          document.getElementById("week-menu").style.display = "none";
+        }
+        if (d.id == "quarter") {
+          document.getElementById("time-button").innerText = "Time Period: Quarter";
+          
+          document.getElementById("year-menu").style.display = "block";
+          document.getElementById("quarter-menu").style.display = "block";
+          document.getElementById("month-menu").style.display = "none";
+          document.getElementById("week-menu").style.display = "none";
+        }
+        if (d.id == "month") {
+          document.getElementById("time-button").innerText = "Time Period: Month";
+
+          document.getElementById("year-menu").style.display = "block";
+          document.getElementById("quarter-menu").style.display = "none";
+          document.getElementById("month-menu").style.display = "block";
+          document.getElementById("week-menu").style.display = "none";
+        }
+        if (d.id == "week") {
+          document.getElementById("time-button").innerText = "Time Period: Week";
+
+          document.getElementById("year-menu").style.display = "block";
+          document.getElementById("quarter-menu").style.display = "none";
+          document.getElementById("month-menu").style.display = "block";
+          document.getElementById("week-menu").style.display = "block";
+        }
+
+        // year buttons
+        if (d.id == "2023") {
+          document.getElementById("year-button").innerText = "Year: 2023";
+        }
+        if (d.id == "2022") {
+          document.getElementById("year-button").innerText = "Year: 2022";
+        }
+
+        // quarter buttons
+        if (d.id == "q1") {
+          document.getElementById("quarter-button").innerText = "Quarter: Q1";
+        }
+        if (d.id == "q2") {
+          document.getElementById("quarter-button").innerText = "Quarter: Q2";
+        }
+        if (d.id == "q3") {
+          document.getElementById("quarter-button").innerText = "Quarter: Q3";
+        }
+        if (d.id == "q4") {
+          document.getElementById("quarter-button").innerText = "Quarter: Q4";
+        }
+
+        // month buttons
+        if (d.id == "january") {
+          document.getElementById("month-button").innerText = "Month: January";
+        }
+        if (d.id == "february") {
+          document.getElementById("month-button").innerText = "Month: February";
+        }
+        if (d.id == "march") {
+          document.getElementById("month-button").innerText = "Month: March";
+        }
+        if (d.id == "april") {
+          document.getElementById("month-button").innerText = "Month: April";
+        }
+        if (d.id == "may") {
+          document.getElementById("month-button").innerText = "Month: May";
+        }
+        if (d.id == "june") {
+          document.getElementById("month-button").innerText = "Month: June";
+        }
+        if (d.id == "july") {
+          document.getElementById("month-button").innerText = "Month: July";
+        }
+        if (d.id == "august") {
+          document.getElementById("month-button").innerText = "Month: August";
+        }
+        if (d.id == "september") {
+          document.getElementById("month-button").innerText = "Month: September";
+        }
+        if (d.id == "october") {
+          document.getElementById("month-button").innerText = "Month: October";
+        }
+        if (d.id == "november") {
+          document.getElementById("month-button").innerText = "Month: November";
+        }
+        if (d.id == "december") {
+          document.getElementById("month-button").innerText = "Month: December";
+        }
+
+        // Week buttons
+        if (d.id == "w1") {
+          document.getElementById("week-button").innerText = "Week: 1";
+        }
+        if (d.id == "w2") {
+          document.getElementById("week-button").innerText = "Week: 2";
+        }
+        if (d.id == "w3") {
+          document.getElementById("week-button").innerText = "Week: 3";
+        }
+        if (d.id == "w4") {
+          document.getElementById("week-button").innerText = "Week: 4";
+        }
+
+        // refresh data
+        refreshData();
+      })
+    });
+
+    function updateHTML(rideCountJson, employeCountJson) {
+      var total_ride_count = 0;
+      var total_operation_count = 0;
+
+      // graph reset
+      opCountChart.data.labels = []
+      opCountChart.data.datasets[0].data = []
+
+      rideCountChart.data.labels = []
+      rideCountChart.data.datasets[0].data = []
+
+      for (var r of rideCountJson) {
+        // boxes
+        total_ride_count += r[2];
+        total_operation_count += r[3];
+
+        // graphs
+        opCountChart.data.labels.push(r[1])
+        opCountChart.data.datasets[0].data.push(r[3])
+
+        const randomNum = () => Math.floor(Math.random() * (235 - 52 + 1) + 52);
+        const randomRGB = () => `rgb(${randomNum()}, ${randomNum()}, ${randomNum()})`;
+
+        rideCountChart.data.labels.push(r[1])
+        rideCountChart.data.datasets[0].data.push(r[2])
+        rideCountChart.data.datasets[0].backgroundColor.push(`rgb(${randomNum()}, ${randomNum()}, ${randomNum()})`)
+      }
+      document.getElementById("total-rider-count").innerHTML = total_ride_count;
+      document.getElementById("total-operation-count").innerHTML = total_operation_count;
+
+      console.log(employeCountJson);
+      for (var r of employeCountJson) {
+        // boxes
+        document.getElementById("employee-count-total").innerText = r[0];
+      }
+      
+      // graphs
+      opCountChart.update();
+      rideCountChart.update();
+      console.log("hsalkjfjd");
+
+    }
+
+    function refreshData() {
+      var args = getDocumentArgs();
+      var prev_time_args = getDocumentArgs();
+
+      console.log(args["time"]);
+      if (args["time"] == "Time Period: Year") {
+        fetch("/api/ride-count/year?" + new URLSearchParams(args))
+          .then(res => {
+            return res.json()
+          })
+          .then(rideCountJson => {
+            fetch("/api/employee-count-ride-operations?" + new URLSearchParams(args))
+              .then((res2) => {
+                return res2.json()
+              })
+              .then(employeCountJson => {
+                document.querySelectorAll(".vs-date").forEach(e => {
+                  e.innerText = "vs prev. year"
+                })
+                updateHTML(rideCountJson, employeCountJson);
+              })
+          })
+
+      } else if (args["time"] == "Time Period: Quarter") {
+        fetch("/api/ride-count/quarter?" + new URLSearchParams(args))
+          .then(res => {
+            return res.json()
+          })
+          .then(rideCountJson => {
+            fetch("/api/employee-count-ride-operations?" + new URLSearchParams(args))
+              .then((res2) => {
+                return res2.json()
+              })
+              .then(employeCountJson => {
+                document.querySelectorAll(".vs-date").forEach(e => {
+                  e.innerText = "vs prev. quarter"
+                })
+                updateHTML(rideCountJson, employeCountJson);
+              })
+          })
+      } else if (args["time"] == "Time Period: Month") {
+        fetch("/api/ride-count/month?" + new URLSearchParams(args))
+          .then(res => {
+            return res.json()
+          })
+          .then(rideCountJson => {
+            fetch("/api/employee-count-ride-operations?" + new URLSearchParams(args))
+              .then((res2) => {
+                return res2.json()
+              })
+              .then(employeCountJson => {
+                document.querySelectorAll(".vs-date").forEach(e => {
+                  e.innerText = "vs prev. month"
+                })
+                updateHTML(rideCountJson, employeCountJson);
+              })
+          })
+      } else if (args["time"] == "Time Period: Week") {
+        fetch("/api/ride-count/week?" + new URLSearchParams(args))
+          .then(res => {
+            return res.json()
+          })
+          .then(rideCountJson => {
+            fetch("/api/employee-count-ride-operations?" + new URLSearchParams(args))
+              .then((res2) => {
+                return res2.json()
+              })
+              .then(employeCountJson => {
+                document.querySelectorAll(".vs-date").forEach(e => {
+                  e.innerText = "vs prev. week"
+                })
+                updateHTML(rideCountJson, employeCountJson);
+              })
+          })
+      }
+    }
+
+    function getDocumentArgs() {
+        return {
+            time: document.getElementById("time-button").innerText.trim(),
+            year: document.getElementById("year-button").innerText.trim(),
+            quarter: document.getElementById("quarter-button").innerText.trim(),
+            month: document.getElementById("month-button").innerText.trim(),
+            week: document.getElementById("week-button").innerText.trim(),
+            // order: document.getElementById("order").innerText
+        };
+    }
+    function getDocumentArgsPrevDate() {
+        var args = {
+            time: document.getElementById("time-button").innerText.trim(),
+            year: document.getElementById("year-button").innerText.trim(),
+            quarter: document.getElementById("quarter-button").innerText.trim(),
+            month: document.getElementById("month-button").innerText.trim(),
+            week: document.getElementById("week-button").innerText.trim(),
+            // order: document.getElementById("order").innerText
+        };
+        if (args["time"] == "Time Period: Year") {
+          var prev_year = parseInt(args["year"].split(" ").pop()) - 1;
+          args["year"] = `Year: ${prev_year}`
+        } else if (args["time"] == "Time Period: Quarter") {
+          var prev_quarter = parseInt(args["quarter"].split(" ").pop()[1]) - 1
+          var prev_year = parseInt(args["year"].split(" ").pop());
+          if (prev_quarter == 0) {
+            prev_quarter = 4;
+            prev_year = parseInt(args["year"].split(" ").pop()) - 1;
+          }
+          args["year"] = `Year: ${prev_year}`
+          args["quarter"] = `Quarter: Q${prev_quarter}`
+        } else if (args["time"] == "Time Period: Month") {
+          var mapping = {
+            "January": 1,
+            "February": 2,
+            "March": 3,
+            "April": 4,
+            "May": 5,
+            "June": 6,
+            "July": 7,
+            "August": 8,
+            "September": 9,
+            "October": 10,
+            "November": 11,
+            "December": 12
+          };
+          var reverseMapping = {
+            1: "January",
+            2: "February",
+            3: "March",
+            4: "April",
+            5: "May",
+            6: "June",
+            7: "July",
+            8: "August",
+            9: "September",
+            10: "October",
+            11: "November",
+            12: "December"
+          };
+          var prev_month = mapping[args["month"].split(" ").pop()] - 1
+          var prev_year = parseInt(args["year"].split(" ").pop());
+          if (prev_month == 0) {
+            prev_month = 12;
+            prev_year = parseInt(args["year"].split(" ").pop()) - 1;
+          }
+          args["year"] = `Year: ${prev_year}`
+          args["month"] = `Month: ${reverseMapping[prev_month]}`
+        } else if (args["time"] == "Time Period: Week") {
+          var mapping = {
+            "January": 1,
+            "February": 2,
+            "March": 3,
+            "April": 4,
+            "May": 5,
+            "June": 6,
+            "July": 7,
+            "August": 8,
+            "September": 9,
+            "October": 10,
+            "November": 11,
+            "December": 12
+          };
+          var reverseMapping = {
+            1: "January",
+            2: "February",
+            3: "March",
+            4: "April",
+            5: "May",
+            6: "June",
+            7: "July",
+            8: "August",
+            9: "September",
+            10: "October",
+            11: "November",
+            12: "December"
+          };
+          var prev_week = parseInt(args["week"].split(" ").pop()) - 1
+          var prev_month = mapping[args["month"].split(" ").pop()]
+          var prev_year = parseInt(args["year"].split(" ").pop());
+          if (prev_week == 0) {
+            prev_week = 4;
+          }
+          if (prev_month == 0) {
+            prev_year -= 1;
+          }
+          args["year"] = `Year: ${prev_year}`
+          args["month"] = `Month: ${reverseMapping[prev_month]}`
+          args["week"] = `Week: ${prev_week}`
+        }
+
+    }
+
+
+    refreshData();
 
   </script>
 </body>
