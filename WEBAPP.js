@@ -694,3 +694,23 @@ console.log(__dirname)
 app.listen(port, () => {
     console.log(`Web app listening at http://localhost:${port}`)
 });
+
+app.use(bodyParser.json());
+
+app.get("/api/tickets", (req, res) => {
+  console.log("GET api/tickets");
+  const sql_call = "SELECT * FROM TICKET_SALE;";
+  executeStatement(sql_call, (rows) => {
+    console.log(rows);
+    res.json(rows);
+  });
+});
+
+app.get("/api/ticketCount", (req, res) => {
+  console.log("GET api/ticketCount");
+  const sql_call = "SELECT COUNT(*) FROM TICKET_SALE;";
+  executeStatement(sql_call, (rows) => {
+    console.log(rows);
+    res.json(rows);
+  });
+});
