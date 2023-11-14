@@ -66,14 +66,18 @@ app.use(express.static(__dirname));
 
 app.get("/api/maintenence-log", (req, res) => {
   var data = req.query;
-  var sql_query_get_ride_id = `SELECT ride_name FROM RIDE WHERE ride_name = ${data.rideName}`
+  var sql_query_get_ride_id = `SELECT ride_id FROM RIDE WHERE ride_name = ${data.rideName}`
 
-  var sql_query = `INSERT INTO MAINTENENCE_LOG (ride_ID, employee_ID, date, work_p_description)
-    VALUES(${data.ride}, ${});
-  `
+  executeStatement(sql_query_get_ride_id, (rows) => {
+    var sql_query = `INSERT INTO MAINTENENCE_LOG (ride_ID, employee_ID, date, work_p_description)
+    VALUES(${rows[0]["ride_id"]}, ${data.employee}), ${data.date}, ${data.work_p_description});`
 
+    executeStatement(sql_query, (log) => {
 
+    })
+  })
 
+  
 })
 
 app.get("/api/employees", (req, res) => {
