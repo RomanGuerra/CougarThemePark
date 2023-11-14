@@ -64,7 +64,20 @@ function executeStatement(sql, callback) {
 // Serve static files
 app.use(express.static(__dirname));
 
-<<<<<<< Updated upstream
+app.get("/api/ride-information", (req, res) => {
+  var sql_query = `
+    SELECT 
+      RIDE.ride_ID, RIDE.ride_name, RIDE_INFORMATION.ride_image_url, RIDE_INFORMATION.ride_long_desc
+    FROM 
+      RIDE
+    LEFT OUTER JOIN RIDE_INFORMATION 
+      ON RIDE.ride_id = RIDE_INFORMATION.ride_id;
+  `
+  executeStatement(sql_query, (rows) => {
+    res.json(rows);
+  })
+})
+
 app.get("/api/maintenence-log", (req, res) => {
   var data = req.query;
   var sql_query_get_ride_id = `SELECT ride_id FROM RIDE WHERE ride_name = ${data.rideName}`
@@ -77,12 +90,7 @@ app.get("/api/maintenence-log", (req, res) => {
 
     })
   })
-
-  
 })
-=======
-
->>>>>>> Stashed changes
 
 app.get("/api/employees", (req, res) => {
   console.log("GET api/employees");
