@@ -64,6 +64,7 @@ function executeStatement(sql, callback) {
 // Serve static files
 app.use(express.static(__dirname));
 
+<<<<<<< Updated upstream
 app.get("/api/maintenence-log", (req, res) => {
   var data = req.query;
   var sql_query_get_ride_id = `SELECT ride_id FROM RIDE WHERE ride_name = ${data.rideName}`
@@ -79,6 +80,9 @@ app.get("/api/maintenence-log", (req, res) => {
 
   
 })
+=======
+
+>>>>>>> Stashed changes
 
 app.get("/api/employees", (req, res) => {
   console.log("GET api/employees");
