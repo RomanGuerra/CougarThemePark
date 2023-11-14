@@ -239,28 +239,34 @@
   <script>
     
 
-    var rideinfo = await fetch("/api/ride-information");;
-
-    var newHTML = '';
-    for (var ride of rideinfo) {
-      var title = ride[1];
-      var imageUrl = ride[2];
-      var description = ride[3];
-      var cardTemplate = `
-      <div class="card shadow me-2 mb-4" style="width: 18rem">
-          <img src="${imageUrl}">
-          <div class="card-body">
-            <h5 class="card-title">${title}</h5>
-            <p class="card-text">${description}</p>
-            <a class="btn btn-secondary" href="https://github.com/RomanGuerra/CougarThemePark">Learn More</a>
+    async function updatePage() {
+      var rideresponse = await fetch("/api/ride-information");;
+      var rideinfo = await rideresponse.json();
+      console.log(rideinfo);
+  
+      var newHTML = '';
+      for (var ride of rideinfo) {
+        var title = ride[1];
+        var imageUrl = ride[2];
+        var description = ride[3];
+        var cardTemplate = `
+        <div class="card shadow me-2 mb-4" style="width: 18rem">
+            <img src="${imageUrl}">
+            <div class="card-body">
+              <h5 class="card-title">${title}</h5>
+              <p class="card-text">${description}</p>
+              <a class="btn btn-secondary" href="https://github.com/RomanGuerra/CougarThemePark">Learn More</a>
+            </div>
           </div>
-        </div>
-      `
-      newHTML += cardTemplate
-    }
+        `
+        newHTML += cardTemplate
+      }
+  
+      document.getElementById("ride-list").innerHTML = newHTML;
+    }  
 
-    document.getElementById("ride-list").innerHTML = newHTML;
+    updatePage();
 
-  </script>
+</script>
 </body>
 </html>
