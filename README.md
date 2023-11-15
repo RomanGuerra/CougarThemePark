@@ -2,7 +2,7 @@
 
 ## Them Park Management System Web Application
 
-![Sample App Image](./img/readme/index.jpg)
+![Sample App Image](./public/img/readme/index.jpg)
 
 The Theme Park Management System is a web application designed to manage information about a specific theme park and collect data to provide various reports on park operations, visitor statistics, ride maintenance, and more. It offers user authentication with different user roles and provides the following features:
 <hr>
