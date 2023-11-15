@@ -229,7 +229,23 @@
   <div class="b-example-divider b-example-vr"></div>
   <div class="container p-5" id="right-sidebar">                
     <h4>Right Sidebar</h4>
-    
+    <div id="edit-form" style="display: none;">
+      <form id="editForm">
+          <label for="editFirstName">First Name:</label>
+          <input type="text" id="editFirstName" name="editFirstName"><br>
+
+          <label for="editLastName">Last Name:</label>
+          <input type="text" id="editLastName" name="editLastName"><br>
+
+          <label for="editContactInfo">Contact Information:</label>
+          <input type="text" id="editContactInfo" name="editContactInfo"><br>
+
+          <label for="editEmergencyContact">Emergency Contact:</label>
+          <input type="text" id="editEmergencyContact" name="editEmergencyContact"><br>
+
+          <button type="submit">Save Changes</button>
+      </form>
+  </div>
   </div>
 
   <!-- <div class="d-flex flex-column flex-shrink-0 bg-body-tertirary" id="right-sidebar">
@@ -321,6 +337,7 @@
                   updateChart(ticketData);
                   
                   reportTableNode2 = document.getElementById("report-table");
+                  reportTableNode2.innerHTML = "";
                   for (var row of json) {
                       var newRow = "<tr id=table.content'>";
                       for (var key of Object.keys(row)) {
@@ -328,6 +345,7 @@
                           newRow += String(row[key]);
                           newRow += "</td>"
                       }
+                      newRow += `<td><button type='button' onclick='editVisitor(${row[1]})' class='btn btn-warning'>Edit</button></td>`;
                       newRow += "</tr>";
                       reportTableNode2.innerHTML += newRow;
                   }
@@ -354,6 +372,72 @@
 
     // Update the total count
     updateTotalCount();
+  </script>
+  <script>
+function editVisitor(visitorId) {
+    // Check if the visitorId is defined before making the request
+    if (visitorId) {
+        // Fetch the visitor information by ID
+        fetch(`/api/visitors/${visitorId}`)
+            .then(response => response.json())
+            .then(visitor => {
+                // Populate the form with the existing data
+                console.log(visitorId)
+                document.getElementById("editFirstName").value = visitor.first_name;
+                document.getElementById("editLastName").value = visitor.last_name;
+                document.getElementById("editContactInfo").value = visitor.contact_information;
+                document.getElementById("editEmergencyContact").value = visitor.emergency_contact;
+
+                // Display the edit form
+                const editForm = document.getElementById("edit-form");
+                editForm.style.display = "block";
+
+                // Set up the form submission with the visitor ID
+                editForm.onsubmit = function () {
+                    saveVisitor(visitorId);
+                    return false;
+                };
+            })
+            .catch(error => {
+                console.error("Error fetching visitor information:", error);
+            });
+    } else {
+        console.error("Invalid visitorId:", visitorId);
+    }
+}
+
+    function saveVisitor(visitorId) {
+    // Fetch the form values
+    const editFirstName = document.getElementById("editFirstName").value;
+    const editLastName = document.getElementById("editLastName").value;
+    const editContactInfo = document.getElementById("editContactInfo").value;
+    const editEmergencyContact = document.getElementById("editEmergencyContact").value;
+
+    // Make a request to update the specific visitor information
+    fetch(`/api/update-visitor/${visitorId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            first_name: editFirstName,
+            last_name: editLastName,
+            contact_information: editContactInfo,
+            emergency_contact: editEmergencyContact,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Hide the edit form after saving changes
+        document.getElementById("edit-form").style.display = "none";
+        // Refresh the visitor report after saving changes
+        requestVisitorReport();
+    })
+    .catch(error => {
+        console.error("Error updating visitor information:", error);
+    });
+}
+
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>

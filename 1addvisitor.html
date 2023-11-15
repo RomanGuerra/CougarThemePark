@@ -201,7 +201,7 @@
 
   <div class="container p-5" id="center-container">  
 
-    <h2>Add Visitor</h2>
+    <h2>Purchase Ticket</h2>
 
     <form id="visitorForm" class="row g-0 needs-validation" novalidate>
 
@@ -224,7 +224,7 @@
       <input type="number" class="form-control" required min="1" max="3" placeholder="" id="tickettype" autocomplete="off">
       <hr>
       <input type="reset" class="form-control" value="Clear">
-      <button class="btn btn-success" type="button" onclick="submitVisitor()" id="addVisitor">Add Visitor</button>
+      <button class="btn btn-success mt-2" type="button" onclick="submitVisitor()" id="addVisitor">Purchase Ticket</button>
     </form>
     
   </div>
@@ -233,12 +233,32 @@
   <div class="container p-5" id="right-sidebar">                
     <h4>Right Sidebar</h4>
     
+    <!-- <h2>Visitor Report</h2>
+    <button type="button" onclick="requestVisitorReport()" id="list" class="btn btn-primary">Refresh Data</button>
+    <h5>Total Visitor Count</h5>
+    <p id="totalCount">Loading...</p>
+    <div class="table-container" id="visitor-table">
+      <div class="table-header">
+        <table class="table table-hover table-responsive" id="report-table-head">   
+          <tr>
+              <th>First Name</th>
+              <th>Last Name</th>
+          </tr>
+        </table>
+      </div>
+      <div class="table-content">
+        <table class="table table-hover table-responsive" id="report-table">
+        </table>
+      </div>
+    </div> -->
+
   </div>
 
 </main>
   <script type="module" src="js/connect.js"></script>
   <script src="server.js"></script> 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
   <script>
     function getVisitorParams() {
       console.log("Getvisitor Parameters is called");
@@ -271,12 +291,12 @@
           // Request was successful, you can handle the success case here
           console.log('Visitor added successfully');
           // Optionally, reset the form after a successful submission
-          alert("Added");
+          alert("Ticket Purchased");
           document.getElementById('visitorForm').reset();
         } else {
           // Handle the error case here
           console.log(visitorData);
-          console.error('Failed to add visitor');
+          console.error('Failed Purchase Ticket');
         }
       })
       .catch(error => {
@@ -284,5 +304,100 @@
       });
     }
   </script>
+    <script>
+      function updateChart(ticketData) {
+        console.log("Ticket Data:", ticketData);
+      var ticketTypes = Object.keys(ticketData);
+      var ticketCounts = Object.values(ticketData);
+
+      var barColors = [
+      "#b91d47",
+      "#00aba9",
+      "#2b5797",
+      "#e8c3b9",
+      "#1e7145"
+      ];
+      
+      new Chart("myChart", {
+          type: "doughnut",
+          data: {
+              labels: ticketTypes,
+              datasets: [{
+                  backgroundColor: barColors,
+                  data: ticketCounts
+              }]
+          },
+          options: {
+              legend: { display: false },
+              title: {
+                  display: true,
+                  text: "Ticket Type Unit Sales"
+              }
+          }
+      });
+  }
+
+        function requestVisitorReport() {
+
+        fetch("/api/newVisitors?")
+        .then((res) => {
+            res.json()
+            .then((json) => {
+                console.log(json);
+                
+                reportTableNode = document.getElementById("report-table-head");
+                reportTableNode.innerHTML = `
+                <tr id="table-header">
+                  <th>Visitor ID</th>
+                  <th>Wristband ID</th>
+                  <th>Firstname</th>
+                  <th>Lastname</th>
+                  <th>Phone</th>
+                  <th>Emergency</th>
+                  <th>Age</th>
+                  <th>Ticket Type</th>
+                </tr>
+                `;
+                
+                var ticketData = {
+                      '1': 0,
+                      '2': 0,
+                      '3': 0,
+                  };
+
+                  for (var row of json) {
+                      var ticketType = row['7'];
+                      console.log(ticketType);
+                      if (1 == ticketType) {
+                          ticketData[ticketType]++;
+                          console.log('increasing');
+                      }
+                      if (2 == ticketType) {
+                          ticketData[ticketType]++;
+                          console.log('increasing');
+                      }
+                      if (3 == ticketType) {
+                          ticketData[ticketType]++;
+                          console.log('increasing');
+                      }
+                  }
+
+                updateChart(ticketData);
+                
+                reportTableNode2 = document.getElementById("report-table");
+                for (var row of json) {
+                    var newRow = "<tr id=table.content'>";
+                    for (var key of Object.keys(row)) {
+                        newRow += "<td>";
+                        newRow += String(row[key]);
+                        newRow += "</td>"
+                    }
+                    newRow += "</tr>";
+                    reportTableNode2.innerHTML += newRow;
+                }
+            })
+        });
+    }
+</script>
 </body>
 </html>
