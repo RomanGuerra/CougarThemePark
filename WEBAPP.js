@@ -633,8 +633,6 @@ app.get("/api/rainout-count", (req, res) => {
   ${order_clause}
   ;
   `
-
-
   executeStatement(sql, (rows) => {
     res.json(rows);
   })
