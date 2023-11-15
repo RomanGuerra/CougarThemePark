@@ -560,34 +560,82 @@ app.get("/api/employee-count-ride-operations", (req, res) => {
   })
 })
 
+app.get("/api/unique-parks", (req, res) => {
+  var sql = `
+    SELECT DISTINCT p_location FROM THEME_PARK
+  ` 
+  executeStatement(sql, (rows) => {
+    return res.json(rows);
+  }) 
+})
+
 app.get("/api/rainout-count", (req, res) => {
   console.log("GET api/rainout-count");
 
-  // SELECT MONTH(date) as month, COUNT(*) as rainout_count FROM RAINOUT
-  // WHERE YEAR(date) = ${sql.query.year}
-  // GROUP BY MONTH(date)
-  // ORDER BY rainout_count ASC;
+  var where_clause = '';
+  var order_clause = '';
+  if (req.query.time == "annual") {
+    where_clause = `WHERE YEAR(date) = ${req.query.year}`;
+  } else if (req.query.time == "quarter") {
+    var qtr = req.query.quarter;
+    var year = req.query.year;
+    var m1 = ``;
+    var m2 = ``;
 
-  var sql_call = `
-    SELECT MONTH(date) as month, COUNT(*) as rainout_count FROM RAINOUT
-    WHERE YEAR(date) = ${req.query.year}
-    GROUP BY MONTH(date)
-  `
+    if (qtr == "1") {
+      m1 = 1;
+      m2 = 3;
+    } else if (qtr == "2") {
+      m1 = 4;
+      m2 = 6;
+    } else if (qtr == "3") {
+      m1 = 7;
+      m2 = 9;
+    } else if (qtr == "4") {
+      m1 = 10;
+      m2 = 12;
+    }
+    where_clause = `WHERE MONTH(date) BETWEEN ${m1} AND ${m2} AND YEAR(date) = ${year}`;
+  } else if (req.query.time == "month") {
+    var month = req.query.month;
+    var year = req.query.year;
+    where_clause = `WHERE MONTH(date) = ${month} AND YEAR(date) = ${year}`;
+  }
+
+  if (req.query.filter != "none") {
+    if (where_clause) {
+      where_clause += ` AND p_location = '${req.query.filter}'`;
+    } else {
+      where_clause += `WHERE p_location = '${req.query.filter}'`;
+    }
+  }
+
   if (req.query.order === "month_asc") {
-    sql_call += "ORDER BY month ASC";
+    order_clause += "ORDER BY p_location ASC";
+  } else if (req.query.order === "month_dsc") {
+    order_clause += "ORDER BY p_location DESC";
+  } else if (req.query.order === "rainout_asc") {
+    order_clause += "ORDER BY date ASC";
+  } else if (req.query.order === "rainout_dsc") {
+    order_clause += "ORDER BY date DESC"
   }
-  if (req.query.order === "month_dsc") {
-    sql_call += "ORDER BY month DESC"
-  }
-  if (req.query.order === "rainout_asc") {
-    sql_call += "ORDER BY rainout_count DESC";
-  }
-  if (req.query.order === "rainout_dsc") {
-    sql_call += "ORDER BY rainout_count ASC"
-  }
-  sql_call += ";";
 
-  executeStatement(sql_call, (rows) => {
+  var sql = `
+  SELECT
+    rainout_ID, date, p_location, notes
+  FROM
+    RAINOUT
+  LEFT OUTER JOIN
+    THEME_PARK
+  ON
+    THEME_PARK.park_id  = RAINOUT.park_ID
+  ${where_clause}
+  ${order_clause}
+  ;
+  `
+
+
+  executeStatement(sql, (rows) => {
     res.json(rows);
   })
 })
