@@ -1,5 +1,5 @@
 var Connection = require('tedious').Connection;
-var config = {  
+var config = {
     server: '64.227.100.29',  //update me
     authentication: {
         type: 'default',
@@ -11,10 +11,10 @@ var config = {
     options: {
         // If you are on Microsoft Azure, you need encryption:
         encrypt: true,
+        trustServerCertificate: true,
         database: 'CougarThemeParkBackUp'  //update me
     }
 };  
-
 
 
 var connection = new Connection(config);  

@@ -805,6 +805,15 @@ app.get("/api/visitors", (req, res) => {
   });
 });
 
+app.get("/api/newVisitors", (req, res) => {
+  console.log("GET api/newVisitors");
+  const sql_call = "SELECT first_name, last_name FROM VISITOR;";
+  executeStatement(sql_call, (rows) => {
+    console.log(rows);
+    res.json(rows);
+  });
+});
+
 app.get("/api/visitorsCount", (req, res) => {
   console.log("GET api/visitorsCount");
   const sql_call = "SELECT COUNT(*) FROM VISITOR;";
@@ -949,4 +958,55 @@ app.get("/api/entryCount", (req, res) => {
     console.log(rows);
     res.json(rows);
   });
+});
+
+
+app.post("/api/update-visitor/:visitorId", async (req, res) => {
+  const visitorId = req.params.visitorId;
+  const { first_name, last_name, contact_information, emergency_contact } = req.body;
+
+  try {
+      const connection = new Connection(config);
+
+      await new Promise((resolve, reject) => {
+          connection.on('connect', (err) => {
+              if (err) {
+                  console.error('Connection Error:', err);
+                  reject(err);
+              } else {
+                  resolve();
+              }
+          });
+
+          connection.connect();
+      });
+
+      const request = new Request(`
+          UPDATE VISITOR 
+          SET first_name = @first_name, 
+              last_name = @last_name, 
+              contact_information = @contact_information, 
+              emergency_contact = @emergency_contact
+          WHERE visitor_ID = @visitorId;
+      `, (err) => {
+          if (err) {
+              console.error('SQL Query Error:', err);
+              res.status(500).json({ success: false, error: 'Error updating visitor information' });
+          } else {
+              res.status(200).json({ success: true });
+          }
+
+          connection.close();
+      });
+
+      request.addParameter('visitorId', TYPES.BigInt, visitorId);
+      request.addParameter('first_name', TYPES.NVarChar, first_name);
+      request.addParameter('last_name', TYPES.NVarChar, last_name);
+      request.addParameter('contact_information', TYPES.NVarChar, contact_information);
+      request.addParameter('emergency_contact', TYPES.NVarChar, emergency_contact);
+
+      connection.execSql(request);
+  } catch (error) {
+      res.status(500).json({ success: false, error: 'Error connecting to the database' });
+  }
 });
