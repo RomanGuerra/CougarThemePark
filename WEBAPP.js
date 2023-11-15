@@ -7,6 +7,7 @@ const app = express();
 const port = 5500;
 
 const bodyParser = require('body-parser');
+const path = require('path');
 
 var Connection = require('tedious').Connection;  
 var config = {
@@ -19,16 +20,14 @@ var config = {
         }
     },
     options: {
-        // If you are on Microsoft Azure, you need encryption:
         encrypt: true,
         trustServerCertificate: true,
         database: 'CougarThemeParkBackUp'  //update me
     }
-};  
+};
 
 var connection = new Connection(config);  
 connection.on('connect', function(err) {  
-    // If no error, then good to proceed.  
     if (!err) {
       console.log("Connected");  
     } else {
@@ -37,6 +36,18 @@ connection.on('connect', function(err) {
 });  
 
 connection.connect();
+
+
+const mssql = require('mssql');
+async function connectMssql() {
+  try {
+    await mssql.connect('Server=64.227.100.29,1433;Database=CougarThemeParkBackUp;User Id=sa;Password=Umacosc3380!;Encrypt=true;TrustServerCertificate=True;')
+    console.log("mssql connected to server");
+  } catch(err) {
+    
+  }
+}
+connectMssql();
 
 var Request = require('tedious').Request;  
 var TYPES = require('tedious').TYPES;  
@@ -61,9 +72,154 @@ function executeStatement(sql, callback) {
     connection.execSql(request);
 }
 
-// Serve static files
-app.use(express.static(__dirname));
+// passport.js
+app.use(require('body-parser').urlencoded({ extended: true }));
 
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+var session = require('express-session');
+
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: true }
+}));
+
+passport.serializeUser(function(user, cb) {
+  return cb(null, {
+    username: user,
+  });
+});
+
+passport.deserializeUser(function(user, cb) {
+  process.nextTick(function() {
+    return cb(null, user);
+  });
+});
+
+async function verifyVisitorUser(username, password) {
+  var sql_query = `
+    SELECT *  FROM VISITOR_USER
+    WHERE username = '${username}' AND password = '${password}';
+  `;
+  const res = await mssql.query(sql_query);
+  return res.rowsAffected > 0;
+};
+
+async function verifyEmployeeUser(username, password) {
+  var sql_query = `
+    SELECT *  FROM EMPLOYEE_USER
+    WHERE username = '${username}' AND password = '${password}';
+  `;
+  const res = await mssql.query(sql_query);
+  return res.rowsAffected > 0;
+};
+
+// visitor login
+passport.use('visitor-local-login', new LocalStrategy({
+      usernameField: 'username',
+      passwordField: 'password'
+    }, 
+    async function (username, password, done) {
+      var res = await verifyVisitorUser(username, password);
+      if (res) {
+        console.log("success login");
+        return done(null, username);
+      }
+      return done(null, false, {message: 'Incorrect email or password.'});
+    }
+));
+
+passport.use('employee-local-login', new LocalStrategy({
+  usernameField: 'username',
+  passwordField: 'password'
+}, 
+async function (username, password, done) {
+  var res = await verifyEmployeeUser(username, password);
+  console.log(res);
+  if (res) {
+    console.log("success login");
+    return done(null, username);
+  }
+  return done(null, false, {message: 'Incorrect email or password.'});
+}
+));
+
+app.use(passport.session());
+
+// Serve static files
+app.use('*/css', express.static(path.join(__dirname, 'public/css')));
+app.use('*/img', express.static(path.join(__dirname, 'public/img')));
+app.use('*/js', express.static(path.join(__dirname, 'public/js')));
+app.use(express.static(path.join(__dirname, 'routes')));
+
+app.post("/api/visitor-logout", function(req, res, next) {
+  req.logOut(function(err) {
+    if (err) { return next(err) }
+      res.redirect('/');
+    })
+})
+
+app.post("/api/visitor-login", passport.authenticate('visitor-local-login', {
+  failureRedirect: '/login.html'
+}), function (req, res, next) {
+  // console.log(req.user)
+  res.redirect("/visitor/dashboard.html");
+});
+
+app.post("/api/employee-logout", function(req, res, next) {
+  req.logOut(function(err) {
+    if (err) { return next(err) }
+      res.redirect('login.html');
+    })
+})
+
+app.post("/api/employee-login", passport.authenticate('employee-local-login', {
+  failureRedirect: '/all/employee-login.html'
+}), async function (req, res, next) {
+
+  result = await mssql.query(`
+    SELECT is_admin FROM EMPLOYEE_USER WHERE username = '${req.body.username}';
+  `)
+  console.log(result.recordsets[0]);
+  if (result.recordsets[0][0]["is_admin"]) {
+    res.redirect("/admin/dashboard.html");
+  } else {
+    res.redirect("/employee/dashboard.html");
+  }
+
+});
+
+app.post("/api/create-visitor-account", async function (req, res, next) {
+  const visitorID = Math.floor(Math.random() * 2147483647); // Generate a random bigint
+  const wristbandID = Math.floor(Math.random() * 2147483647); // Generate a random bigint
+
+  try {
+    console.log("visitor table");
+    await mssql.query(`
+      INSERT INTO VISITOR 
+        (visitor_ID, wristband_ID, first_name, last_name, contact_information, emergency_contact, age, ticket_type)
+      VALUES 
+        (${visitorID}, ${wristbandID}, '${req.body.firstname}', '${req.body.lastname}', ${req.body.phonenumber}, ${req.body.ephonenumber}, ${req.body.age}, ${0});`)
+  
+    console.log("visitor-user table");
+    await mssql.query(`
+      INSERT INTO VISITOR_USER 
+        (visitor_ID, username, password)
+      VALUES 
+        (${visitorID}, '${req.body.username}', '${req.body.password}');`);
+
+    req.logIn(req.body.username, function(err) {
+      if (err) { return next(err); }
+      res.redirect("/visitor/dashboard.html");
+    })
+  }  catch (err) {
+    res.status(400);
+  }
+});
+
+// api calls
 app.get("/api/ride-information", (req, res) => {
   var sql_query = `
     SELECT 
@@ -72,11 +228,11 @@ app.get("/api/ride-information", (req, res) => {
       RIDE
     LEFT OUTER JOIN RIDE_INFORMATION 
       ON RIDE.ride_id = RIDE_INFORMATION.ride_id;
-  `
+  `;
   executeStatement(sql_query, (rows) => {
     res.json(rows);
   })
-})
+});
 
 app.get("/api/maintenence-log", (req, res) => {
   var data = req.query;
@@ -649,6 +805,15 @@ app.get("/api/visitors", (req, res) => {
   });
 });
 
+app.get("/api/newVisitors", (req, res) => {
+  console.log("GET api/newVisitors");
+  const sql_call = "SELECT first_name, last_name FROM VISITOR;";
+  executeStatement(sql_call, (rows) => {
+    console.log(rows);
+    res.json(rows);
+  });
+});
+
 app.get("/api/visitorsCount", (req, res) => {
   console.log("GET api/visitorsCount");
   const sql_call = "SELECT COUNT(*) FROM VISITOR;";
@@ -793,4 +958,55 @@ app.get("/api/entryCount", (req, res) => {
     console.log(rows);
     res.json(rows);
   });
+});
+
+
+app.post("/api/update-visitor/:visitorId", async (req, res) => {
+  const visitorId = req.params.visitorId;
+  const { first_name, last_name, contact_information, emergency_contact } = req.body;
+
+  try {
+      const connection = new Connection(config);
+
+      await new Promise((resolve, reject) => {
+          connection.on('connect', (err) => {
+              if (err) {
+                  console.error('Connection Error:', err);
+                  reject(err);
+              } else {
+                  resolve();
+              }
+          });
+
+          connection.connect();
+      });
+
+      const request = new Request(`
+          UPDATE VISITOR 
+          SET first_name = @first_name, 
+              last_name = @last_name, 
+              contact_information = @contact_information, 
+              emergency_contact = @emergency_contact
+          WHERE visitor_ID = @visitorId;
+      `, (err) => {
+          if (err) {
+              console.error('SQL Query Error:', err);
+              res.status(500).json({ success: false, error: 'Error updating visitor information' });
+          } else {
+              res.status(200).json({ success: true });
+          }
+
+          connection.close();
+      });
+
+      request.addParameter('visitorId', TYPES.BigInt, visitorId);
+      request.addParameter('first_name', TYPES.NVarChar, first_name);
+      request.addParameter('last_name', TYPES.NVarChar, last_name);
+      request.addParameter('contact_information', TYPES.NVarChar, contact_information);
+      request.addParameter('emergency_contact', TYPES.NVarChar, emergency_contact);
+
+      connection.execSql(request);
+  } catch (error) {
+      res.status(500).json({ success: false, error: 'Error connecting to the database' });
+  }
 });
