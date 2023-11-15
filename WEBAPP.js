@@ -1009,4 +1009,16 @@ app.post("/api/update-visitor/:visitorId", async (req, res) => {
   } catch (error) {
       res.status(500).json({ success: false, error: 'Error connecting to the database' });
   }
+  
+});
+
+app.use(bodyParser.json());
+
+// Endpoint to get the status
+app.get('/api/status', (req, res) => {
+    // Query the ConfigurationTable to get the status
+    // Send the status as JSON
+    // Replace with actual database query logic
+    const status = getStatusFromDatabase(); 
+    res.json({ status });
 });

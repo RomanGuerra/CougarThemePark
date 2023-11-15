@@ -233,6 +233,23 @@
   <div class="b-example-divider b-example-vr"></div>
   <div class="container p-5" id="right-sidebar">                
     <h4>Right Sidebar</h4>
+    <div id="status-container"></div>
+
+    <script>
+        // Function to fetch status from the backend
+        function fetchStatus() {
+            fetch('/api/status')
+                .then(response => response.json())
+                .then(data => {
+                    // Update the status on the page
+                    document.getElementById('status-container').innerText = `Status: ${data.status}`;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Periodically fetch status (adjust interval as needed)
+        setInterval(fetchStatus, 5000); // Fetch every 5 seconds
+    </script>
     <div id="edit-form" style="display: none;">
       <form id="editForm">
           <label for="editFirstName">First Name:</label>
