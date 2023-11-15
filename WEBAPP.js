@@ -773,3 +773,24 @@ app.get("/api/ticketCount", (req, res) => {
     res.json(rows);
   });
 });
+
+app.use(bodyParser.json());
+
+app.get("/api/entries", (req, res) => {
+  console.log("GET api/entries");
+  const sql_call = "SELECT visitor_ID, FORMAT(entry_date, 'yyyy-MM-dd') AS entry_date, COALESCE(CONVERT(VARCHAR, entry_time, 108), '00:00:00') AS entry_time, ticket_type, entry_ID, p_location FROM ENTRY_LOG;";
+
+  executeStatement(sql_call, (rows) => {
+    console.log(rows);
+    res.json(rows);
+  });
+});
+
+app.get("/api/entryCount", (req, res) => {
+  console.log("GET api/entryCount");
+  const sql_call = "SELECT COUNT(*) FROM ENTRY_LOG;";
+  executeStatement(sql_call, (rows) => {
+    console.log(rows);
+    res.json(rows);
+  });
+});
