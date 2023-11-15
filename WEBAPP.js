@@ -219,6 +219,44 @@ app.post("/api/create-visitor-account", async function (req, res, next) {
   }
 });
 
+app.post("/api/create-rainout", async function (req, res, next) {
+  const rainoutID = Math.floor(Math.random() * 2147483647); // Generate a random bigint
+  const sql_call = `
+  INSERT INTO 
+    RAINOUT(rainout_ID, park_ID, date, time, notes)
+  VALUES(${rainoutID}, ${req.body.parkid}, '${req.body.date}', '${req.body.time}', '${req.body.notes}')`
+  await mssql.query(sql_call);
+  res.json({ message: "success!" });
+});
+
+app.post("/api/update-rainout", async function (req, res, next) {
+  const sql_call = `
+    UPDATE 
+      RAINOUT
+    SET 
+      park_ID = ${req.body.parkid}, 
+      date = '${req.body.date}', 
+      time = '${req.body.time}',
+      notes = '${req.body.notes}'
+    WHERE
+      rainout_ID = ${req.body.updateid};
+    `
+  await mssql.query(sql_call);
+  res.json({ message: "success!" });
+});
+
+app.post("/api/delete-rainout", async function (req, res, next) {
+  const sql_call = `
+    DELETE FROM 
+      RAINOUT
+    WHERE
+      rainout_ID = ${req.body.deleteid};
+  `
+  await mssql.query(sql_call);
+  res.json({ message: "success!" });
+});
+
+
 // api calls
 app.get("/api/ride-information", (req, res) => {
   var sql_query = `
