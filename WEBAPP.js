@@ -757,7 +757,8 @@ app.use(bodyParser.json());
 
 app.get("/api/tickets", (req, res) => {
   console.log("GET api/tickets");
-  const sql_call = "SELECT * FROM TICKET_SALE;";
+  const sql_call = "SELECT transaction_ID, visitor_ID, ticket_type, FORMAT(date, 'yyyy-MM-dd') AS date, COALESCE(CONVERT(VARCHAR, time, 108), '00:00:00') AS time, ticket_id, employee_ID, amount FROM TICKET_SALE;";
+
   executeStatement(sql_call, (rows) => {
     console.log(rows);
     res.json(rows);
