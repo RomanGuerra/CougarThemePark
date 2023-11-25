@@ -306,6 +306,452 @@ app.get("/api/employees", (req, res) => {
   });
 });
 
+app.get("/api/ride-data/year", (req, res) => {
+  console.log("GET /api/ride-data/year");
+  var year = (req.query.year.split(" ")).pop()
+  where_clause = `WHERE YEAR(date) = ${year}`;
+
+  var top_clause = ``;
+  var order_by_clause = ``;
+  if (req.query.filter == "Filter By: Top 10 Rider Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY w.visitor_count DESC`;
+  } else if (req.query.filter == "Filter By: Bottom 10 Rider Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY w.visitor_count ASC`;
+  } else if (req.query.filter == "Filter By: Top 10 Operation Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY ride_operations_count DESC`;
+  } else if (req.query.filter == "Filter By: Bottom 10 Operation Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY ride_operations_count ASC`;
+  }
+
+  var ride_statistics_query = `
+  SELECT ${top_clause}
+    R_OPERATION_EMPLOYEE.event_ID,
+    R_OPERATION_EMPLOYEE.ride_name,
+    ISNULL(R_VISITOR_COUNT.visitor_count, 0) as visitor_,
+    R_OPERATION_EMPLOYEE.ride_ID,
+    R_OPERATION_EMPLOYEE.date,
+    R_OPERATION_EMPLOYEE.time,
+    R_OPERATION_EMPLOYEE.ride_duration,
+    R_OPERATION_EMPLOYEE.employee_ID,
+    R_OPERATION_EMPLOYEE.first_name,
+    R_OPERATION_EMPLOYEE.last_name,
+    R_OPERATION_EMPLOYEE.role_type
+  FROM
+    (
+    SELECT
+      RIDE_EM.event_ID,
+      RIDE_EM.ride_ID,
+      RIDE.ride_name,
+      RIDE_EM.date,
+      RIDE_EM.time,
+      RIDE_EM.ride_duration,
+      RIDE_EM.employee_ID,
+      RIDE_EM.first_name,
+      RIDE_EM.last_name,
+      RIDE_EM.role_type 
+    FROM
+      (	
+      SELECT 
+        RIDE_OPERATION.event_ID,
+        RIDE_OPERATION.ride_ID,
+        RIDE_OPERATION.date,
+        RIDE_OPERATION.time,
+        RIDE_OPERATION.ride_duration,
+        RIDE_OPERATION.employee_ID,
+        EMPLOYEE.first_name,
+        EMPLOYEE.last_name,
+        EMPLOYEE.role_type 
+      FROM
+        RIDE_OPERATION
+      INNER JOIN
+        EMPLOYEE
+      ON
+        EMPLOYEE.employee_ID = RIDE_OPERATION.employee_ID
+      ) AS RIDE_EM, 
+      RIDE
+    WHERE RIDE_EM.ride_ID = RIDE.ride_ID
+    ) AS R_OPERATION_EMPLOYEE
+  LEFT OUTER JOIN
+    (
+    SELECT 
+      events_id,
+      COUNT(events_id) as visitor_count
+    FROM
+      VISITOR_EVENT
+    GROUP BY
+      events_id
+    ) AS R_VISITOR_COUNT
+  ON 
+    R_OPERATION_EMPLOYEE.event_ID = R_VISITOR_COUNT.events_id
+  ${where_clause}
+  ${order_by_clause}
+  ;
+  `
+  
+
+  executeStatement(ride_statistics_query, (ride_stat_rows) => {
+    res.json(ride_stat_rows);
+  })
+})
+
+app.get("/api/ride-data/quarter", (req, res) => {
+  var year = (req.query.year.split(" ")).pop()
+  var qtr = req.query.quarter.split(" ").pop();
+  var m1 = ``;
+  var m2 = ``;
+
+  if (qtr == "Q1") {
+    m1 = 1;
+    m2 = 3;
+  } else if (qtr == "Q2") {
+    m1 = 4;
+    m2 = 6;
+  } else if (qtr == "Q3") {
+    m1 = 7;
+    m2 = 9;
+  } else if (qtr == "Q4") {
+    m1 = 10;
+    m2 = 12;
+  }
+
+  where_clause = `WHERE MONTH(date) BETWEEN ${m1} AND ${m2} AND YEAR(date) = ${year}`;
+
+  var top_clause = ``;
+  var order_by_clause = ``;
+  if (req.query.filter == "Filter By: Top 10 Rider Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY R_VISITOR_COUNT.visitor_count DESC`;
+  } else if (req.query.filter == "Filter By: Bottom 10 Rider Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY R_VISITOR_COUNT.visitor_count ASC`;
+  } else if (req.query.filter == "Filter By: Top 10 Operation Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY ride_operations_count DESC`;
+  } else if (req.query.filter == "Filter By: Bottom 10 Operation Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY ride_operations_count ASC`;
+  }
+
+  var ride_statistics_query = `
+  SELECT ${top_clause}
+    R_OPERATION_EMPLOYEE.event_ID,
+    R_OPERATION_EMPLOYEE.ride_name,
+    ISNULL(R_VISITOR_COUNT.visitor_count, 0) as visitor_,
+    R_OPERATION_EMPLOYEE.ride_ID,
+    R_OPERATION_EMPLOYEE.date,
+    R_OPERATION_EMPLOYEE.time,
+    R_OPERATION_EMPLOYEE.ride_duration,
+    R_OPERATION_EMPLOYEE.employee_ID,
+    R_OPERATION_EMPLOYEE.first_name,
+    R_OPERATION_EMPLOYEE.last_name,
+    R_OPERATION_EMPLOYEE.role_type
+  FROM
+    (
+    SELECT
+      RIDE_EM.event_ID,
+      RIDE_EM.ride_ID,
+      RIDE.ride_name,
+      RIDE_EM.date,
+      RIDE_EM.time,
+      RIDE_EM.ride_duration,
+      RIDE_EM.employee_ID,
+      RIDE_EM.first_name,
+      RIDE_EM.last_name,
+      RIDE_EM.role_type 
+    FROM
+      (	
+      SELECT 
+        RIDE_OPERATION.event_ID,
+        RIDE_OPERATION.ride_ID,
+        RIDE_OPERATION.date,
+        RIDE_OPERATION.time,
+        RIDE_OPERATION.ride_duration,
+        RIDE_OPERATION.employee_ID,
+        EMPLOYEE.first_name,
+        EMPLOYEE.last_name,
+        EMPLOYEE.role_type 
+      FROM
+        RIDE_OPERATION
+      INNER JOIN
+        EMPLOYEE
+      ON
+        EMPLOYEE.employee_ID = RIDE_OPERATION.employee_ID
+      ) AS RIDE_EM, 
+      RIDE
+    WHERE RIDE_EM.ride_ID = RIDE.ride_ID
+    ) AS R_OPERATION_EMPLOYEE
+  LEFT OUTER JOIN
+    (
+    SELECT 
+      events_id,
+      COUNT(events_id) as visitor_count
+    FROM
+      VISITOR_EVENT
+    GROUP BY
+      events_id
+    ) AS R_VISITOR_COUNT
+  ON 
+    R_OPERATION_EMPLOYEE.event_ID = R_VISITOR_COUNT.events_id
+  ${where_clause}
+  ${order_by_clause}
+  ;
+  `
+
+  executeStatement(ride_statistics_query, (ride_stat_rows) => {
+    res.json(ride_stat_rows);
+  })
+})
+
+app.get("/api/ride-data/month", (req,res) => {
+  var year = (req.query.year.split(" ")).pop()
+  var month = req.query.month.split(" ").pop();
+  var mapping = {
+    "January": 1,
+    "February": 2,
+    "March": 3,
+    "April": 4,
+    "May": 5,
+    "June": 6,
+    "July": 7,
+    "August": 8,
+    "September": 9,
+    "October": 10,
+    "November": 11,
+    "December": 12
+  };
+  where_clause = `WHERE MONTH(date) = ${mapping[month]} AND YEAR(date) = ${year}`;
+
+  var top_clause = ``;
+  var order_by_clause = ``;
+  if (req.query.filter == "Filter By: Top 10 Rider Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY R_VISITOR_COUNT.visitor_count DESC`;
+  } else if (req.query.filter == "Filter By: Bottom 10 Rider Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY R_VISITOR_COUNT.visitor_count ASC`;
+  } else if (req.query.filter == "Filter By: Top 10 Operation Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY ride_operations_count DESC`;
+  } else if (req.query.filter == "Filter By: Bottom 10 Operation Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY ride_operations_count ASC`;
+  }
+
+  var ride_statistics_query = `
+  SELECT ${top_clause}
+    R_OPERATION_EMPLOYEE.event_ID,
+    R_OPERATION_EMPLOYEE.ride_name,
+    ISNULL(R_VISITOR_COUNT.visitor_count, 0) as visitor_,
+    R_OPERATION_EMPLOYEE.ride_ID,
+    R_OPERATION_EMPLOYEE.date,
+    R_OPERATION_EMPLOYEE.time,
+    R_OPERATION_EMPLOYEE.ride_duration,
+    R_OPERATION_EMPLOYEE.employee_ID,
+    R_OPERATION_EMPLOYEE.first_name,
+    R_OPERATION_EMPLOYEE.last_name,
+    R_OPERATION_EMPLOYEE.role_type
+  FROM
+    (
+    SELECT
+      RIDE_EM.event_ID,
+      RIDE_EM.ride_ID,
+      RIDE.ride_name,
+      RIDE_EM.date,
+      RIDE_EM.time,
+      RIDE_EM.ride_duration,
+      RIDE_EM.employee_ID,
+      RIDE_EM.first_name,
+      RIDE_EM.last_name,
+      RIDE_EM.role_type 
+    FROM
+      (	
+      SELECT 
+        RIDE_OPERATION.event_ID,
+        RIDE_OPERATION.ride_ID,
+        RIDE_OPERATION.date,
+        RIDE_OPERATION.time,
+        RIDE_OPERATION.ride_duration,
+        RIDE_OPERATION.employee_ID,
+        EMPLOYEE.first_name,
+        EMPLOYEE.last_name,
+        EMPLOYEE.role_type 
+      FROM
+        RIDE_OPERATION
+      INNER JOIN
+        EMPLOYEE
+      ON
+        EMPLOYEE.employee_ID = RIDE_OPERATION.employee_ID
+      ) AS RIDE_EM, 
+      RIDE
+    WHERE RIDE_EM.ride_ID = RIDE.ride_ID
+    ) AS R_OPERATION_EMPLOYEE
+  LEFT OUTER JOIN
+    (
+    SELECT 
+      events_id,
+      COUNT(events_id) as visitor_count
+    FROM
+      VISITOR_EVENT
+    GROUP BY
+      events_id
+    ) AS R_VISITOR_COUNT
+  ON 
+    R_OPERATION_EMPLOYEE.event_ID = R_VISITOR_COUNT.events_id
+  ${where_clause}
+  ${order_by_clause}
+  ;
+  `
+  console.log(ride_statistics_query);
+
+  executeStatement(ride_statistics_query, (ride_stat_rows) => {
+    res.json(ride_stat_rows);
+  })
+})
+
+app.get("/api/ride-data/week", (req,res) => {
+  var year = (req.query.year.split(" ")).pop()
+  var month = req.query.month.split(" ").pop();
+  var wk = req.query.week.split(" ").pop();
+
+  var daysInMonth = {
+    "January": 31,
+    "February": 28, // Note: Leap year handling is not included in this simple example
+    "March": 31,
+    "April": 30,
+    "May": 31,
+    "June": 30,
+    "July": 31,
+    "August": 31,
+    "September": 30,
+    "October": 31,
+    "November": 30,
+    "December": 31
+  };
+  var mapping = {
+    "January": 1,
+    "February": 2,
+    "March": 3,
+    "April": 4,
+    "May": 5,
+    "June": 6,
+    "July": 7,
+    "August": 8,
+    "September": 9,
+    "October": 10,
+    "November": 11,
+    "December": 12
+  };
+  var d1;
+  var d2;
+  var ddiff = Math.ceil(daysInMonth[month] / 4);
+  if (wk == 1) {
+    d1 = 1;
+    d2 = d1 + 6;
+  } else if (wk == 2) {
+    d1 = 8;
+    d2 = d1 + 6;
+  } else if (wk == 3) {
+    d1 = 15;
+    d2 = d1 + 6;
+  } else {
+    d1 = 21;
+    d2 = daysInMonth[month];
+  }
+
+  var date1 = year + "-" + mapping[month] + "-" + d1;
+  var date2 = year + "-" + mapping[month] + "-" + d2;
+  where_clause = `WHERE CAST([date] AS DATE) BETWEEN '${date1}' AND '${date2}'`;
+
+  var top_clause = ``;
+  var order_by_clause = ``;
+  if (req.query.filter == "Filter By: Top 10 Rider Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY R_VISITOR_COUNT.visitor_count DESC`;
+  } else if (req.query.filter == "Filter By: Bottom 10 Rider Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY R_VISITOR_COUNT.visitor_count ASC`;
+  } else if (req.query.filter == "Filter By: Top 10 Operation Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY ride_operations_count DESC`;
+  } else if (req.query.filter == "Filter By: Bottom 10 Operation Count") {
+    top_clause = `TOP 10`;
+    order_by_clause = `ORDER BY ride_operations_count ASC`;
+  }
+
+  var ride_statistics_query = `
+  SELECT ${top_clause}
+    R_OPERATION_EMPLOYEE.event_ID,
+    R_OPERATION_EMPLOYEE.ride_name,
+    ISNULL(R_VISITOR_COUNT.visitor_count, 0) as visitor_,
+    R_OPERATION_EMPLOYEE.ride_ID,
+    R_OPERATION_EMPLOYEE.date,
+    R_OPERATION_EMPLOYEE.time,
+    R_OPERATION_EMPLOYEE.ride_duration,
+    R_OPERATION_EMPLOYEE.employee_ID,
+    R_OPERATION_EMPLOYEE.first_name,
+    R_OPERATION_EMPLOYEE.last_name,
+    R_OPERATION_EMPLOYEE.role_type
+  FROM
+    (
+    SELECT
+      RIDE_EM.event_ID,
+      RIDE_EM.ride_ID,
+      RIDE.ride_name,
+      RIDE_EM.date,
+      RIDE_EM.time,
+      RIDE_EM.ride_duration,
+      RIDE_EM.employee_ID,
+      RIDE_EM.first_name,
+      RIDE_EM.last_name,
+      RIDE_EM.role_type 
+    FROM
+      (	
+      SELECT 
+        RIDE_OPERATION.event_ID,
+        RIDE_OPERATION.ride_ID,
+        RIDE_OPERATION.date,
+        RIDE_OPERATION.time,
+        RIDE_OPERATION.ride_duration,
+        RIDE_OPERATION.employee_ID,
+        EMPLOYEE.first_name,
+        EMPLOYEE.last_name,
+        EMPLOYEE.role_type 
+      FROM
+        RIDE_OPERATION
+      INNER JOIN
+        EMPLOYEE
+      ON
+        EMPLOYEE.employee_ID = RIDE_OPERATION.employee_ID
+      ) AS RIDE_EM, 
+      RIDE
+    WHERE RIDE_EM.ride_ID = RIDE.ride_ID
+    ) AS R_OPERATION_EMPLOYEE
+  LEFT OUTER JOIN
+    (
+    SELECT 
+      events_id,
+      COUNT(events_id) as visitor_count
+    FROM
+      VISITOR_EVENT
+    GROUP BY
+      events_id
+    ) AS R_VISITOR_COUNT
+  ON 
+    R_OPERATION_EMPLOYEE.event_ID = R_VISITOR_COUNT.events_id
+  ${where_clause}
+  ${order_by_clause}
+  ;
+  `
+
+  executeStatement(ride_statistics_query, (ride_stat_rows) => {
+    res.json(ride_stat_rows);
+  })
+})
+
 app.get("/api/ride-count/year", (req, res) => {
   console.log("GET /api/ride-count/year");
   var year = (req.query.year.split(" ")).pop()

@@ -212,10 +212,10 @@
   </div>
   
   <div class="b-example-divider b-example-vr"></div>
-  <div class="container p-5" id="center-container" style="overflow-y:scroll;">             
+  <div class="container p-5" id="center-container" style="overflow-y:scroll;">
     <div>
       <h2 class="mb-0 p-0">Ride Count Report</h2>
-      <p>Statistics on ride usage, ride operations, and employee supervision activity</p>
+      <p>Statistics on ride usage, ride operations, and employee supervision activity. <strong>Scroll down for table and granular information.</strong></p>
       <div class="d-flex flex-row ">
         <div id="time-menu" class="dropdown me-2">
           <button class="btn btn-primary dropdown-toggle" type="button" id="time-button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -289,7 +289,6 @@
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
             <li><a id="no-sort" class="dropdown-item update-data" href="#">None</a></li>
-            <li><a id="op-sort" class="dropdown-item update-data" href="#">Operation Count</a></li>
             <li><a id="ride-sort" class="dropdown-item update-data" href="#">Rider Count</a></li>
             <li><a id="name-a-z-sort" class="dropdown-item update-data" href="#">Name A-Z</a></li>
             <li><a id="name-z-a-sort" class="dropdown-item update-data" href="#">Name Z-A</a></li>
@@ -303,13 +302,14 @@
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
             <li><a id="no-filter" class="dropdown-item update-data" href="#">None</a></li>
             <li><a id="top-rider" class="dropdown-item update-data" href="#">Top 10 Rider Count</a></li>
-            <li><a id="top-op" class="dropdown-item update-data" href="#">Top 10 Operation Count</a></li>
             <li><a id="bottom-rider" class="dropdown-item update-data" href="#">Bottom 10 Rider Count</a></li>
-            <li><a id="bottom-op" class="dropdown-item update-data" href="#">Bottom 10 Operation Count</a></li>
           </ul>
         </div>
 
       </div>
+      
+      </br>
+
       <div class="d-flex flex-row justify-content-between flex-wrap">
         <div class="card mb-1 me-1 m-4 p-5 d-flex flex-column justify-content-between align-items-center shadow" style="width:16rem; aspect-ratio: 4 / 1;">
           <div class="">
@@ -359,6 +359,19 @@
         </div>
       </div>
     </div>
+    <div class="">
+      <table id="table-report" class="table">
+          <tr>
+              <th>Month</th>
+              <th>Rainout Count</th>
+          </tr>
+          <tr>
+              <td>Test</td>
+              <td>Test</td>
+          </tr>
+      </table>
+    </div>
+
   </div>
 
   <div class="b-example-divider b-example-vr"></div>
@@ -573,7 +586,38 @@
       })
     });
 
-    function updateHTML(rideCountJson, employeeCountJson, rideCountPrevJson, employeeCountPrevJson) {
+    function updateHTML(rideCountJson, employeeCountJson, rideCountPrevJson, employeeCountPrevJson, rideTableJson) {
+      
+      console.log(rideCountJson);
+
+      // table refresh
+      const tableNode = document.getElementById("table-report")
+      tableNode.innerHTML = `
+        <tr>
+            <th>Event ID</th>
+            <th>Ride</th>
+            <th>Rider Count</th>
+            <th>Ride ID</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Ride Duration</th>
+            <th>Operating Employee ID</th>
+            <th>Operating Employee First Name</th>
+            <th>Operating Employee Last Name</th>
+            <th>Operating Employee Role ID</th>
+        </tr>
+      `
+      for (var row of rideTableJson) {
+          var newRow = "<tr>";
+          for (var key of Object.keys(row)) {
+              newRow += "<td>";
+              newRow += String(row[key]);
+              newRow += "</td>"
+          }
+          newRow += "</tr>";
+          tableNode.innerHTML += newRow;
+      }
+      
       var total_ride_count = 0;
       var total_operation_count = 0;
 
@@ -676,13 +720,7 @@
     }
 
     function sortData(data) {
-      if (document.getElementById("sort-button").innerText == "Sort By: Operation Count") {
-        data.sort((a, b) => {
-          return b[3] < a[3] ? 1
-               : b[3] > a[3] ? -1
-               : 0;
-        });
-      } else if (document.getElementById("sort-button").innerText == "Sort By: Rider Count") {
+      if (document.getElementById("sort-button").innerText == "Sort By: Rider Count") {
         data.sort((a, b) => {
           return b[2] < a[2] ? 1
                : b[2] > a[2] ? -1
@@ -709,36 +747,25 @@
 
       console.log(args["time"]);
       if (args["time"] == "Time Period: Year") {
-        fetch("/api/ride-count/year?" + new URLSearchParams(args))
-          .then(res => {
-            return res.json()
-          })
-          .then(rideCountJson => {
-            fetch("/api/employee-count-ride-operations?" + new URLSearchParams(args))
-              .then((res2) => {
-                return res2.json()
-              })
-              .then(employeCountJson => {
-                fetch("/api/ride-count/year?" + new URLSearchParams(args))
-                  .then(res3 => {
-                    return res3.json();
-                  })
-                  .then(rideCountPrevJson => {
-                    fetch("/api/employee-count-ride-operations?" + new URLSearchParams(args))
-                      .then(res4 => {
-                        return res4.json();
-                      })
-                      .then(employeeCountPrevJson => {
-                        document.querySelectorAll(".vs-date").forEach(e => {
-                          e.innerText = "vs prev. year"
-                        })
-                        sortData(rideCountJson);
-                        sortData(rideCountPrevJson);
-                        updateHTML(rideCountJson, employeCountJson, rideCountPrevJson, employeeCountPrevJson);
-                      })
-                  })
-                })
-              })
+        var res = await fetch("/api/ride-count/year?" + new URLSearchParams(args));
+        var rideCountJson = await res.json();
+        var res2 = await fetch("/api/employee-count-ride-operations?" + new URLSearchParams(args))
+        var employeCountJson = await res2.json();
+        var res3 = await fetch("/api/ride-count/year?" + new URLSearchParams(prev_time_args));
+        var rideCountPrevJson = await res3.json();
+        var res4 = await fetch("/api/employee-count-ride-operations?" + new URLSearchParams(prev_time_args))
+        var employeeCountPrevJson = await res4.json();
+        var result = await fetch("/api/ride-data/year?" + new URLSearchParams(args))
+        var rideTableJson = await result.json()
+
+        document.querySelectorAll(".vs-date").forEach(e => {
+          e.innerText = "vs prev. year"
+        })
+
+        sortData(rideCountJson);
+        sortData(rideCountPrevJson);
+        sortData(rideTableJson);
+        updateHTML(rideCountJson, employeCountJson, rideCountPrevJson, employeeCountPrevJson, rideTableJson);
       } else if (args["time"] == "Time Period: Quarter") {
         var res = await fetch("/api/ride-count/quarter?" + new URLSearchParams(args));
         var rideCountJson = await res.json();
@@ -748,6 +775,8 @@
         var rideCountPrevJson = await res3.json();
         var res4 = await fetch("/api/employee-count-ride-operations?" + new URLSearchParams(prev_time_args))
         var employeeCountPrevJson = await res4.json();
+        var result = await fetch("/api/ride-data/quarter?" + new URLSearchParams(args))
+        var rideTableJson = await result.json()
         
         document.querySelectorAll(".vs-date").forEach(e => {
           e.innerText = "vs prev. quarter"
@@ -755,7 +784,8 @@
 
         sortData(rideCountJson);
         sortData(rideCountPrevJson);
-        updateHTML(rideCountJson, employeCountJson, rideCountPrevJson, employeeCountPrevJson);
+        sortData(rideTableJson);
+        updateHTML(rideCountJson, employeCountJson, rideCountPrevJson, employeeCountPrevJson, rideTableJson);
 
       } else if (args["time"] == "Time Period: Month") {
         var res = await fetch("/api/ride-count/month?" + new URLSearchParams(args));
@@ -766,6 +796,8 @@
         var rideCountPrevJson = await res3.json();
         var res4 = await fetch("/api/employee-count-ride-operations?" + new URLSearchParams(prev_time_args))
         var employeeCountPrevJson = await res4.json();
+        var result = await fetch("/api/ride-data/month?" + new URLSearchParams(args))
+        var rideTableJson = await result.json()
 
         document.querySelectorAll(".vs-date").forEach(e => {
           e.innerText = "vs prev. month"
@@ -773,7 +805,8 @@
 
         sortData(rideCountJson);
         sortData(rideCountPrevJson);
-        updateHTML(rideCountJson, employeCountJson, rideCountPrevJson, employeeCountPrevJson);
+        sortData(rideTableJson);
+        updateHTML(rideCountJson, employeCountJson, rideCountPrevJson, employeeCountPrevJson, rideTableJson);
 
       } else if (args["time"] == "Time Period: Week") {
         var res = await fetch("/api/ride-count/week?" + new URLSearchParams(args));
@@ -784,6 +817,8 @@
         var rideCountPrevJson = await res3.json();
         var res4 = await fetch("/api/employee-count-ride-operations?" + new URLSearchParams(prev_time_args))
         var employeeCountPrevJson = await res4.json();
+        var result = await fetch("/api/ride-data/week?" + new URLSearchParams(args))
+        var rideTableJson = await result.json()
 
         document.querySelectorAll(".vs-date").forEach(e => {
           e.innerText = "vs prev. week"
@@ -791,7 +826,8 @@
 
         sortData(rideCountJson);
         sortData(rideCountPrevJson);
-        updateHTML(rideCountJson, employeCountJson, rideCountPrevJson, employeeCountPrevJson);
+        sortData(rideTableJson);
+        updateHTML(rideCountJson, employeCountJson, rideCountPrevJson, employeeCountPrevJson, rideTableJson);
       }
     }
 
