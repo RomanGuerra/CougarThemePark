@@ -119,7 +119,7 @@
 
       <li class="nav-item">
         <a href="3entry.html" class="nav-link active" aria-current="page">
-        <svg class="bi pe-none me-2" width="18" height="18" fill="black"><use xlink:href="#entrysvg"></use></svg>
+        <svg class="bi pe-none me-2" width="18" height="18" fill="white"><use xlink:href="#entrysvg"></use></svg>
         Visitor Traffic
         </a>
       </li>
@@ -187,7 +187,7 @@
         <p id="totalCount">Loading...</p>
         <div class="table-container" id="entry-table">
             <div class="table-header">
-                <table class="table table-hover table-responsive" id="report-table-head">   
+                <table class="table table-hover table-responsive" id="report-table">   
                     <tr>
                         <th>Visitor ID</th>
                         <th>Entry Date</th>
@@ -198,17 +198,13 @@
                     </tr>
                 </table>
             </div>
-            <div class="table-content">
-                <table class="table table-hover table-responsive" id="report-table">
-                </table>
-            </div>
+
         </div>
 
       </div>
 
   <div class="b-example-divider b-example-vr"></div>
   <div class="container p-4" id="right-sidebar">                
-    <h4>Right Sidebar</h4>
     
   </div>
 
@@ -254,9 +250,9 @@
           .then((json) => {
               console.log("Received JSON data:", json);
   
-              var reportTableNode = document.getElementById("report-table-head");
+              var reportTableNode = document.getElementById("report-table");
               reportTableNode.innerHTML = `
-                  <tr id="table-header">
+                  <tr>
                       <th>Visitor ID</th>
                       <th>Entry Date</th>
                       <th>Entry Time</th>
@@ -266,19 +262,19 @@
                   </tr>
               `;
   
-              var reportTableNode2 = document.getElementById("report-table");
+              //var reportTableNode = document.getElementById("report-table");
               // Clear existing rows
-              reportTableNode2.innerHTML = "";
+              //reportTableNode.innerHTML = "";
   
               for (var row of json) {
-                  var newRow = "<tr id='table-content'>";
+                  var newRow = "<tr>";
                   for (var key of Object.keys(row)) {
                       newRow += "<td>";
                       newRow += String(row[key]);
                       newRow += "</td>";
                   }
                   newRow += "</tr>";
-                  reportTableNode2.innerHTML += newRow;
+                  reportTableNode.innerHTML += newRow;
               }
           })
           .catch(error => {
