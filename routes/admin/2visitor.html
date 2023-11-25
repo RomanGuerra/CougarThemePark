@@ -237,7 +237,7 @@
   </div>
 
   <div class="b-example-divider b-example-vr"></div>
-  <div class="container p-5" id="right-sidebar">                
+  <div class="container p-4" id="right-sidebar">                
     
     <div id="edit-form">
       <h5>Edit Visitor Info</h5>
@@ -281,41 +281,41 @@
   <script>
 
 
-          function requestVisitorReport() {
+    function requestVisitorReport() {
 
-          fetch("/api/visitors?")
-          .then((res) => {
-              res.json()
-              .then((json) => {
-                  console.log(json);
-                  
-                  reportTableNode = document.getElementById("report-table");
-                  reportTableNode.innerHTML = `
-                  <tr>
-                    <th>Visitor ID</th>
-                    <th>Firstname</th>
-                    <th>Lastname</th>
-                    <th>Phone</th>
-                    <th>Emergency</th>
-                    <th>Age</th>
-                    <th>Ticket Type</th>
-                  </tr>
-                  `;
-                  
-                  
-                  for (var row of json) {
-                      var newRow = "<tr>";
-                      for (var key of Object.keys(row)) {
-                          newRow += "<td>";
-                          newRow += String(row[key]);
-                          newRow += "</td>"
-                      }
-                      newRow += "</tr>";
-                      reportTableNode.innerHTML += newRow;
-                  }
-              })
-          });
-      }
+    fetch("/api/visitors?")
+    .then((res) => {
+        res.json()
+        .then((json) => {
+            console.log(json);
+            
+            reportTableNode = document.getElementById("report-table");
+            reportTableNode.innerHTML = `
+            <tr>
+              <th>Visitor ID</th>
+              <th>Firstname</th>
+              <th>Lastname</th>
+              <th>Phone</th>
+              <th>Emergency</th>
+              <th>Age</th>
+              <th>Ticket Type</th>
+            </tr>
+            `;
+            
+            
+            for (var row of json) {
+                var newRow = "<tr>";
+                for (var key of Object.keys(row)) {
+                    newRow += "<td>";
+                    newRow += String(row[key]);
+                    newRow += "</td>"
+                }
+                newRow += "</tr>";
+                reportTableNode.innerHTML += newRow;
+            }
+        })
+    });
+}
   </script>
   <script>
     function updateTotalCount() {

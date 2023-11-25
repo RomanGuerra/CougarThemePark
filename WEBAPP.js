@@ -1091,3 +1091,51 @@ app.post("/api/delete-visitor", (req, res) => {
   });
   connection.execSql(request);
 });
+
+app.get("/api/attraction_ID", (req, res) => {
+  console.log("GET api/attraction_ID");
+  const sql_call = "SELECT attraction_ID, attraction_name FROM ATTRACTION;";
+  executeStatement(sql_call, (rows) => {
+    console.log(rows);
+    res.json(rows);
+  });
+});
+
+app.post("/api/add-maintenance", (req, res) => {
+  console.log("POST /api/add-maintenance");
+
+  const { ride_ID, work_p_description } = req.body;
+  console.log('Executing SQL');
+  
+  const maintenance_ID = Math.floor(Math.random() * 2147483647); // Generate a random bigint
+  const request = new Request(
+      `INSERT INTO MAINTENENCE_LOG (maintenence_ID, ride_ID, work_p_description)
+       VALUES (@maintenance_ID, @ride_ID, @work_p_description);
+       SELECT SCOPE_IDENTITY() AS MaintananceID;`,
+      (err) => {
+          if (err) {
+              console.error('SQL Query Error:', err);
+          }
+      }
+  );
+    request.addParameter('maintenance_ID', TYPES.BigInt, maintenance_ID);
+    request.addParameter('ride_ID', TYPES.BigInt, ride_ID);
+    request.addParameter('work_p_description', TYPES.VarChar, work_p_description);
+    request.on('row', function (columns) {
+        columns.forEach(function (column) {
+            if (column.value === null) {
+                console.log('NULL');
+                res.status(200).json({ visitorID: column.value });
+            } else {
+                //console.log('Visitor ID of inserted item is ' + column.value);
+                res.status(200).json({ visitorID: column.value });
+            }
+        });
+    });
+
+  // Close the connection after the final event emitted by the request, after the callback passes
+  request.on('requestCompleted', function (rowCount, more) {
+      //connection.close();
+  });
+  connection.execSql(request);
+});
