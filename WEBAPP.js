@@ -272,6 +272,18 @@ app.get("/api/ride-information", (req, res) => {
   })
 });
 
+app.get("/api/ticket-information", (req, res) => {
+  var sql_query = `
+    SELECT 
+      TICKET.ticket_description, TICKET.cost
+    FROM 
+      TICKET;
+  `;
+  executeStatement(sql_query, (rows) => {
+    res.json(rows);
+  })
+});
+
 app.get("/api/maintenence-log", (req, res) => {
   var data = req.query;
   var sql_query_get_ride_id = `SELECT ride_id FROM RIDE WHERE ride_name = ${data.rideName}`

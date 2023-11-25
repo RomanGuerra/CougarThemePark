@@ -149,138 +149,53 @@
   <div class="b-example-divider b-example-vr"></div>
 
   <div class="container p-5" id="center-container" style="overflow-y:scroll;">             
-    <h2>Ticket Sales Report</h2>
-        <button type="button" onclick="requestTicketReport()" id="list" class="btn btn-primary">Refresh Data</button>
-        <h5>Total Ticket Count</h5>
-        <p id="totalCount">Loading...</p>
-        <div class="table-container" id="visitor-table">
-            <div class="table-header">
-                <table class="table table-hover table-responsive" id="report-table-head">   
-                    <tr>
-                        <th>Transaction ID</th>
-                        <th>Visitor ID</th>
-                        <th>Ticket Type</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Ticket ID</th>
-                        <th>Employee ID</th>
-                        <th>Amount</th>
-                    </tr>
-                </table>
-            </div>
-            <div class="table-content">
-                <table class="table table-hover table-responsive" id="report-table">
-                </table>
-            </div>
-        </div>
+    <h2>Purchase Ticket</h2>
+    <form id="visitorForm" class="row g-0 needs-validation" novalidate>
 
-      </div>
+      <legend>First Name</legend>
+      <input type="text" class="form-control" required minlength="1" maxlength="20" placeholder="" id="fname" autocomplete="off">
+
+      <legend>Last Name</legend>
+      <input type="text" class="form-control" required minlength="1" maxlength="20" placeholder="" id="lname" autocomplete="off">
+
+      <legend>Phone #</legend>
+      <input type="tel" class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder="" id="phone" autocomplete="off">
+
+      <legend>Emergency Contact</legend>
+      <input type="text" class="form-control" size="15" placeholder="" id="ename" autocomplete="off">
+
+      <legend>Age</legend>
+      <input type="number" class="form-control" required min="0" max="100" placeholder="" id="age" autocomplete="off">
+      
+      <legend>Ticket Type</legend>
+      <!-- <input type="number" class="form-control" required min="1" max="3" placeholder="" id="tickettype" autocomplete="off"> -->
+
+      <select class="form-select" aria-label="Default select example" id="tickettype">
+        <option selected>Open this select menu</option>
+        <option value="1">Child Ticket</option>
+        <option value="2">Adult Ticket</option>
+        <option value="3">Senior Ticket</option>
+      </select>
+
+      <hr>
+      <input type="reset" class="form-control" value="Clear">
+      <button class="btn btn-success mt-2" type="button" onclick="submitVisitor()" id="addVisitor">Purchase Ticket</button>
+    </form>
+
+  </div>
 
       <div class="b-example-divider b-example-vr"></div>
   <div class="container p-5" id="right-sidebar">                
-    <h4>Right Sidebar</h4>
+    <h4>Ticket Prices</h4>
+    <div id="ride-list" class="d-flex flex-row flex-wrap justify-content-between">
     
   </div>
 
     </main>
 
     <script type="module" src="js/connect.js"></script>
-    <script src="server.js"></script> 
-    <script>
-      function updateChart(ticketData) {
-          console.log("Ticket Data:", ticketData);
-          var ticketTypes = Object.keys(ticketData);
-          var ticketCounts = Object.values(ticketData);
-  
-          var barColors = [
-              "#b91d47",
-              "#00aba9",
-              "#2b5797",
-              "#e8c3b9",
-              "#1e7145"
-          ];
-  
-          new Chart("myChart", {
-              type: "doughnut",
-              data: {
-                  labels: ticketTypes,
-                  datasets: [{
-                      backgroundColor: barColors,
-                      data: ticketCounts
-                  }]
-              },
-              options: {
-                  legend: { display: false },
-                  title: {
-                      display: true,
-                      text: "Ticket Type Unit Sales"
-                  }
-              }
-          });
-      }
-  
-      function requestTicketReport() {
-        fetch("/api/tickets")
-            .then((res) => res.json())
-            .then((json) => {
-                console.log("Received JSON data:", json);
-    
-                var reportTableNode = document.getElementById("report-table-head");
-                reportTableNode.innerHTML = `
-                    <tr id="table-header">
-                        <th>Transaction ID</th>
-                        <th>Visitor ID</th>
-                        <th>Ticket Type</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Ticket ID</th>
-                        <th>Employee ID</th>
-                        <th>Amount</th>
-                    </tr>
-                `;
-    
-                var reportTableNode2 = document.getElementById("report-table");
-                // Clear existing rows
-                reportTableNode2.innerHTML = "";
-    
-                for (var row of json) {
-                    var newRow = "<tr id='table-content'>";
-                    for (var key of Object.keys(row)) {
-                        newRow += "<td>";
-                        newRow += String(row[key]);
-                        newRow += "</td>";
-                    }
-                    newRow += "</tr>";
-                    reportTableNode2.innerHTML += newRow;
-                }
-            })
-            .catch(error => {
-                console.error("Error fetching ticket data:", error);
-            });
-    }
-    
-  </script>
-  
-    <script>
-        // Function to make an AJAX request and update the total count on the page
-        function updateTotalCount() {
-            const totalCountElement = document.getElementById("totalCount");
-            fetch("/api/ticketCount")
-                .then(response => response.json())
-                .then(data => {
-                    // Extract the count value from the response
-                    const count = data[0]['0'];
-                    totalCountElement.textContent = `Total Ticket Sales: ${count}`;
-                })
-                .catch(error => {
-                    console.error("Error fetching total ticket count:", error);
-                    totalCountElement.textContent = "Error";
-                });
-        }
-
-        // Update the total count
-        updateTotalCount();
-    </script>
+    <script src="server.js"></script>
+    <script type="module" src="/public/js/ticket.js"></script> 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
