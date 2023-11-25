@@ -59,7 +59,7 @@ Before you can run this web app, make sure you have the following software insta
 
 `Node.js` - The web app framework used for this project.
 
-#### Intallation
+#### Installation
 Clone repository into your local machine:
 ```
 $ git clone https://github.com/RomanGuerra/CougarThemePark.git
@@ -73,7 +73,7 @@ Install dependencies:
 $ npm install
 ```
 
-#### Usage
+#### Host On Local Server
 To run the Theme Park Management System web app, use the following command:
 ```
 $ node WEBAPP.js
@@ -95,6 +95,3 @@ GitHub: [nntcao](https://github.com/nntcao)
 
 Godswill Effi
 GitHub: [gceffi](https://github.com/gceffi)
-
-Angelos Mintzaridis
-GitHub: [AngelosM2002](https://github.com/AngelosM2002)
