@@ -848,7 +848,7 @@ app.use(bodyParser.json());
 
 app.get("/api/visitors", (req, res) => {
   console.log("GET api/visitors");
-  const sql_call = "SELECT * FROM VISITOR;";
+  const sql_call = "SELECT visitor_ID, first_name, last_name, contact_information, emergency_contact, age, ticket_type FROM VISITOR WHERE status = 1;";
   executeStatement(sql_call, (rows) => {
     console.log(rows);
     res.json(rows);
@@ -882,9 +882,10 @@ app.post("/api/add-visitor", (req, res) => {
   
   const visitorID = Math.floor(Math.random() * 2147483647); // Generate a random bigint
   const wristbandID = Math.floor(Math.random() * 2147483647); // Generate a random bigint
+  const status = 1;
   const request = new Request(
-      `INSERT INTO VISITOR (visitor_ID, wristband_ID, first_name, last_name, contact_information, emergency_contact, age, ticket_type)
-       VALUES (@visitorID, @wristbandID, @fname, @lname, @phone, @ename, @age, @tickettype);
+      `INSERT INTO VISITOR (visitor_ID, wristband_ID, first_name, last_name, contact_information, emergency_contact, age, ticket_type, status)
+       VALUES (@visitorID, @wristbandID, @fname, @lname, @phone, @ename, @age, @tickettype, @status);
        SELECT SCOPE_IDENTITY() AS VisitorID;`,
       (err) => {
           if (err) {
@@ -900,6 +901,7 @@ app.post("/api/add-visitor", (req, res) => {
     request.addParameter('ename', TYPES.BigInt, ename);
     request.addParameter('age', TYPES.TinyInt, age);
     request.addParameter('tickettype', TYPES.TinyInt, tickettype);
+    request.addParameter('status', TYPES.Bit, status);
     request.on('row', function (columns) {
         columns.forEach(function (column) {
             if (column.value === null) {
@@ -1011,52 +1013,81 @@ app.get("/api/entryCount", (req, res) => {
 });
 
 
-app.post("/api/update-visitor/:visitorId", async (req, res) => {
-  const visitorId = req.params.visitorId;
-  const { first_name, last_name, contact_information, emergency_contact } = req.body;
+app.post("/api/update-visitor", (req, res) => {
+  console.log("POST /api/update-visitor");
 
-  try {
-      const connection = new Connection(config);
-
-      await new Promise((resolve, reject) => {
-          connection.on('connect', (err) => {
-              if (err) {
-                  console.error('Connection Error:', err);
-                  reject(err);
-              } else {
-                  resolve();
-              }
-          });
-
-          connection.connect();
-      });
-
-      const request = new Request(`
-          UPDATE VISITOR 
-          SET first_name = @first_name, 
-              last_name = @last_name, 
-              contact_information = @contact_information, 
-              emergency_contact = @emergency_contact
-          WHERE visitor_ID = @visitorId;
-      `, (err) => {
+  const { visitorID, fname, lname, phone, ename } = req.body;
+  console.log('Executing SQL');
+  
+  const request = new Request(
+      `UPDATE 
+        VISITOR
+      SET
+        first_name = @fname,
+        last_name = @lname,
+        contact_information = @phone,
+        emergency_contact = @ename
+       WHERE
+        visitor_ID = @visitorID;`,
+      (err) => {
           if (err) {
               console.error('SQL Query Error:', err);
-              res.status(500).json({ success: false, error: 'Error updating visitor information' });
-          } else {
-              res.status(200).json({ success: true });
           }
+      }
+  );
+    request.addParameter('visitorID', TYPES.BigInt, visitorID);
+    request.addParameter('fname', TYPES.NVarChar, fname);
+    request.addParameter('lname', TYPES.NVarChar, lname);
+    request.addParameter('phone', TYPES.BigInt, phone);
+    request.addParameter('ename', TYPES.BigInt, ename);
+    request.on('row', function (columns) {
+        columns.forEach(function (column) {
+            if (column.value === null) {
+                console.log('NULL');
+                res.status(200).json({ visitorID: column.value });
+            } else {
+                res.status(200).json({ visitorID: column.value });
+            }
+        });
+    });
 
-          connection.close();
-      });
+  request.on('requestCompleted', function (rowCount, more) {
+  });
+  connection.execSql(request);
+});
 
-      request.addParameter('visitorId', TYPES.BigInt, visitorId);
-      request.addParameter('first_name', TYPES.NVarChar, first_name);
-      request.addParameter('last_name', TYPES.NVarChar, last_name);
-      request.addParameter('contact_information', TYPES.NVarChar, contact_information);
-      request.addParameter('emergency_contact', TYPES.NVarChar, emergency_contact);
+app.post("/api/delete-visitor", (req, res) => {
+  console.log("POST /api/delete-visitor");
 
-      connection.execSql(request);
-  } catch (error) {
-      res.status(500).json({ success: false, error: 'Error connecting to the database' });
-  }
+  const { visitorID} = req.body;
+  console.log('Executing SQL');
+  
+  const request = new Request(
+      `UPDATE 
+        VISITOR
+      SET
+        status = 0
+       WHERE
+        visitor_ID = @visitorID;`,
+      (err) => {
+          if (err) {
+              console.error('SQL Query Error:', err);
+          }
+      }
+  );
+    request.addParameter('visitorID', TYPES.BigInt, visitorID);
+    request.on('row', function (columns) {
+        columns.forEach(function (column) {
+            if (column.value === null) {
+                console.log('NULL');
+                res.status(200).json({ visitorID: column.value });
+            } else {
+                res.status(200).json({ visitorID: column.value });
+            }
+        });
+    });
+
+  request.on('requestCompleted', function (rowCount, more) {
+  });
+  connection.execSql(request);
 });
