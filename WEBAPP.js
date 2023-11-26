@@ -148,31 +148,55 @@ async function (username, password, done) {
 
 app.use(passport.session());
 
+app.get('/', (req, res) => {
+  return res.redirect('/all/login.html')
+})
+
 // Serve static files
 app.use('*/css', express.static(path.join(__dirname, 'public/css')));
 app.use('*/img', express.static(path.join(__dirname, 'public/img')));
 app.use('*/js', express.static(path.join(__dirname, 'public/js')));
-app.use(express.static(path.join(__dirname, 'routes')));
+
+app.use('/all', express.static(path.join(__dirname, 'routes', 'all')));
+app.use('/admin', [
+  passport.authenticate('session', { failureRedirect: '/all/employee-login.html' }),
+  express.static(path.join(__dirname, 'routes', 'admin'))
+]);
+app.use('/employee', [
+  passport.authenticate('session', { failureRedirect: '/all/employee-login.html' }),
+  express.static(path.join(__dirname, 'routes', 'employee')), 
+]);
+app.use('/visitor', [
+  passport.authenticate('session', { failureRedirect: '/all/login.html' }),
+  express.static(path.join(__dirname, 'routes', 'visitor')), 
+]);
 
 app.post("/api/visitor-logout", function(req, res, next) {
-  req.logOut(function(err) {
-    if (err) { return next(err) }
-      res.redirect('/');
-    })
+  console.log("/api/visitor-logout");
+  // req.session.destroy((e)=>{
+  //   res.redirect('/');
+  // })
+  req.logout({}, (e) => {
+    req.user = null
+    res.redirect('/');
+  })
 })
 
 app.post("/api/visitor-login", passport.authenticate('visitor-local-login', {
-  failureRedirect: '/login.html'
+  failureRedirect: '/all/login.html'
 }), function (req, res, next) {
-  // console.log(req.user)
   res.redirect("/visitor/dashboard.html");
 });
 
 app.post("/api/employee-logout", function(req, res, next) {
-  req.logOut(function(err) {
-    if (err) { return next(err) }
-      res.redirect('login.html');
-    })
+  console.log("/api/employee-logout");
+  // req.session.destroy((e)=>{
+  //   res.redirect('/');
+  // })
+  req.logout({}, (e) => {
+    req.user = null
+    res.redirect('/');
+  })
 })
 
 app.post("/api/employee-login", passport.authenticate('employee-local-login', {
@@ -226,7 +250,7 @@ app.post("/api/create-rainout", async function (req, res, next) {
     RAINOUT(rainout_ID, park_ID, date, time, notes)
   VALUES(${rainoutID}, ${req.body.parkid}, '${req.body.date}', '${req.body.time}', '${req.body.notes}')`
   await mssql.query(sql_call);
-  res.json({ message: "success!" });
+  res.status(205)
 });
 
 app.post("/api/update-rainout", async function (req, res, next) {
@@ -242,7 +266,7 @@ app.post("/api/update-rainout", async function (req, res, next) {
       rainout_ID = ${req.body.updateid};
     `
   await mssql.query(sql_call);
-  res.json({ message: "success!" });
+  res.status(205)
 });
 
 app.post("/api/delete-rainout", async function (req, res, next) {
@@ -253,7 +277,7 @@ app.post("/api/delete-rainout", async function (req, res, next) {
       rainout_ID = ${req.body.deleteid};
   `
   await mssql.query(sql_call);
-  res.json({ message: "success!" });
+  res.status(205)
 });
 
 
