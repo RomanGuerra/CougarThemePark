@@ -239,40 +239,38 @@
   </div>
 
   <div class="b-example-divider b-example-vr"></div>
-  <div class="container p-5" id="right-sidebar">                
-    <h4>Right Sidebar</h4>
-    <div id="status-container"></div>
+  <div class="container p-4" id="right-sidebar">                
+    
+    <div id="edit-form">
+      <h5>Edit Visitor Info</h5>
+      <form class="form-signin" class="row g-0 needs-validation" novalidate>
 
-    <script>
-        // Function to fetch status from the backend
-        function fetchStatus() {
-            fetch('/api/status')
-                .then(response => response.json())
-                .then(data => {
-                    // Update the status on the page
-                    document.getElementById('status-container').innerText = `Status: ${data.status}`;
-                })
-                .catch(error => console.error('Error:', error));
-        }
+        <label>Visitor ID</label>
+        <input type="text" class="form-control" required minlength="1" maxlength="20" placeholder="" id="visitor_id" autocomplete="off">
 
-        // Periodically fetch status (adjust interval as needed)
-        setInterval(fetchStatus, 5000); // Fetch every 5 seconds
-    </script>
-    <div id="edit-form" style="display: none;">
-      <form id="editForm">
-          <label for="editFirstName">First Name:</label>
-          <input type="text" id="editFirstName" name="editFirstName"><br>
+        <label>First Name</label>
+        <input type="text" class="form-control" required minlength="1" maxlength="20" placeholder="" id="fname" autocomplete="off">
+  
+        <label>Last Name</label>
+        <input type="text" class="form-control" required minlength="1" maxlength="20" placeholder="" id="lname" autocomplete="off">
+  
+        <label>Phone #</label>
+        <input type="tel" class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder="" id="phone" autocomplete="off">
+  
+        <label>Emergency Contact #</label>
+        <input type="text" class="form-control" size="15" placeholder="" id="ename" autocomplete="off">
 
-          <label for="editLastName">Last Name:</label>
-          <input type="text" id="editLastName" name="editLastName"><br>
+        <button class="btn btn-warning mt-2" type="button" onclick="SaveVisitorChanges()">Save Changes</button>
+      </form>
+    </div>
+    <br>
 
-          <label for="editContactInfo">Contact Information:</label>
-          <input type="text" id="editContactInfo" name="editContactInfo"><br>
-
-          <label for="editEmergencyContact">Emergency Contact:</label>
-          <input type="text" id="editEmergencyContact" name="editEmergencyContact"><br>
-
-          <button type="submit">Save Changes</button>
+    <div class="" id="delete">
+      <h5>Delete Visitor</h5>
+      <form class="form-signin" class="row g-0 needs-validation" novalidate>
+          <label for="deleteid" class="sr-only">Visitor ID</label>
+          <input name="deleteid" type="text" id="deleteid" class="form-control" required="" autocomplete="off">
+        <button class="btn btn-danger mt-2" type="button" onclick="DeleteVisitor()">Delete Visitor</button>
       </form>
   </div>
   </div>
@@ -284,7 +282,8 @@
 </main>
   <script type="module" src="js/connect.js"></script>
   <script src="server.js"></script> 
-  
+  <script type="module" src="/public/js/rain.js"></script>
+
   <script>
         function updateChart(ticketData) {
           console.log("Ticket Data:", ticketData);

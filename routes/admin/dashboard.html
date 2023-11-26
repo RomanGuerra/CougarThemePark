@@ -252,12 +252,16 @@
   </div>
 
   <div class="b-example-divider b-example-vr"></div>
-  <div class="container p-4" id="right-sidebar">                
+  <div class="container p-4" id="right-sidebar">  
+    <div id="rainoutAlert" style="color: red; display: none;">
+      <span class="badge rounded-pill text-bg-danger">Rainout Alert: A rainout is in process today.</span>
+    </div>                 
   </div>
 
 </main>
   <script type="module" src="js/connect.js"></script>
   <script src="server.js"></script> 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="/public/js/rain.js"></script>
 </body>
 </html>
