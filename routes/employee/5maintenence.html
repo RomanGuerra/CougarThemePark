@@ -126,7 +126,7 @@
       
       <li class="nav-item">
           <a href="5maintenence.html" class="nav-link active aria-current="page">
-          <svg class="bi pe-none me-2" width="18" height="18" fill="black"><use xlink:href="#maintenencesvg"></use></svg>
+          <svg class="bi pe-none me-2" width="18" height="18" fill="white"><use xlink:href="#maintenencesvg"></use></svg>
           Maintenence
           </a>
       </li>
@@ -134,7 +134,7 @@
       <li class="nav-item">
         <a href="7themeparks.html" class="nav-link text-dark" aria-current="page">
         <svg class="bi pe-none me-2" width="18" height="18" fill="black"><use xlink:href="#themeparkssvg"></use></svg>
-        Theme Parks
+        Theme Park Map
         </a>
       </li>
       <li class="nav-item">
@@ -182,71 +182,125 @@
 
 
   <div class="container p-5" id="center-container" style="overflow-y:scroll;">             
-    <h2>Ride Maintenance Report</h2>
+    <h2>Ride Maintenance</h2>
 
-    <form id="maintenanceForm">
-        <div class="mb-3">
-            <label for="rideName" class="form-label">Ride Name</label>
-            <input type="text" class="form-control" id="rideName" name="rideName" required>
-        </div>
-        <div class="mb-3">
-            <label for="maintenanceDate" class="form-label">Maintenance Date</label>
-            <input type="date" class="form-control" id="maintenanceDate" name="maintenanceDate" required>
-        </div>
-        <div class="mb-3">
-            <label for="maintenanceDescription" class="form-label">Maintenance Description</label>
-            <textarea class="form-control" id="maintenanceDescription" name="maintenanceDescription" rows="4" required></textarea>
-        </div>
-        <div class="mb-3">
-          <label for="maintenanceTasks" class="form-label">Maintenance Tasks</label>
-          <select class="form-control" id="maintenanceTasks" name="maintenanceTasks" multiple>
-              <option value="Daily Inspections">Daily Inspections</option>
-              <option value="Regular Servicing">Regular Servicing</option>
-              <option value="Manufacturer Recommendations">Manufacturer Recommendations</option>
-              <option value="Periodic Safety Audits">Periodic Safety Audits</option>
-              <option value="Staff Training">Staff Training</option>
-              <option value="Record-Keeping">Record-Keeping</option>
-              <option value="Emergency Procedures">Emergency Procedures</option>
-              <option value="Compliance with Regulations">Compliance with Regulations</option>
-              <option value="Seasonal Shutdowns">Seasonal Shutdowns</option>
-              <option value="Quality Assurance">Quality Assurance</option>
-          </select>
-      </div>
-        <button id="submission" type="submit" class="btn btn-primary">Submit Report</button>
+    <form id="MaintForm" class="row g-0 needs-validation" novalidate>
+      <legend>Attraction ID</legend>
+      <input type="text" class="form-control" required minlength="1" maxlength="20" placeholder="" id="ride_id" autocomplete="off">
+
+      <legend>Maintenance Description</legend>
+      <select class="form-control" id="maintenanceTasks" name="maintenanceTasks" multiple>
+          <option value="Daily Inspections">Daily Inspections</option>
+          <option value="Regular Servicing">Regular Servicing</option>
+          <option value="Manufacturer Recommendations">Manufacturer Recommendations</option>
+          <option value="Periodic Safety Audits">Periodic Safety Audits</option>
+          <option value="Staff Training">Staff Training</option>
+          <option value="Record-Keeping">Record-Keeping</option>
+          <option value="Emergency Procedures">Emergency Procedures</option>
+          <option value="Compliance with Regulations">Compliance with Regulations</option>
+          <option value="Seasonal Shutdowns">Seasonal Shutdowns</option>
+          <option value="Quality Assurance">Quality Assurance</option>
+      </select>
+
+      <button class="btn btn-success mt-2" type="button" onclick="submitMaintenance()" id="addMaintenance">Submit Maintenance Entry</button>
     </form>
 
 
   </div>
 
   <div class="b-example-divider b-example-vr"></div>
-  <div class="container p-4" id="right-sidebar">                
-    <h4>Right Sidebar</h4>
-    
+  <div class="container p-4" id="right-sidebar"> 
+    <div id="rainoutAlert" style="color: red; display: none;">
+      <span class="badge rounded-pill text-bg-danger">Rainout Alert: A rainout is in process today.</span>
+    </div>                
+    <h4>List of Attractions</h4>
+    <div class="table-container" id="visitor-table">
+      <div class="table-header">
+        <table class="table table-hover table-responsive" id="report-table">   
+          <tr>
+              <th>Attraction ID</th>
+              <th>Name</th>
+          </tr>
+        </table>
+      </div>
+    </div>
   </div>
   
 </main>
   <script type="module" src="js/connect.js"></script>
   <script src="server.js"></script> 
+  <script type="module" src="/public/js/rain.js"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    function getInformationOnPage() {
+    function getMaintParams() {
+      console.log("getMaintParams is called");
       return {
-        rideName: document.getElementById("rideName").value,
-        maintenenceDate: document.getElementById("maintenanceDate").value,
-        maintenenceDescription: document.getElementById("maintenanceDescription").value,
-        maintenenceTask: document.getElementById("maintenanceTasks").value,
+        ride_ID: document.getElementById("ride_id").value,
+        work_p_description: document.getElementById("maintenanceTasks").value,
       };
     }
 
-    async function sendServerRequestInsert(args) {
-      var response = await fetch("/api/maintenence-log" + new URLSearchParams(args));
-      
-    }
+    function submitMaintenance() {
+      console.log("Submit is called");
+      const visitorData = getMaintParams();
+      console.log(visitorData);
 
-    document.getElementById("submission").addEventListener("click", (el) => {
-      var args = getInformationOnPage();
-      sendServerRequestInsert(args);
-    }) 
+    fetch('/api/add-maintenance', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(visitorData),
+      
+    })
+      .then(response => {
+        if (response.ok) {
+          console.log('Maintanence Entry Added Successfully');
+          alert("Maintanence Entry Added Successfully");
+          document.getElementById('MaintForm').reset();
+        } else {
+          console.log(visitorData);
+          console.error('Failed Maintanence Entry');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+  </script>
+  <script>
+    function requestAttractionID() {
+
+      fetch("/api/attraction_ID?")
+      .then((res) => {
+          res.json()
+          .then((json) => {
+              console.log(json);
+              
+              reportTableNode = document.getElementById("report-table");
+              reportTableNode.innerHTML = `
+              <tr>
+                <th>Attraction ID</th>
+                <th>Name</th>
+              </tr>
+              `;
+              
+              
+              for (var row of json) {
+                  var newRow = "<tr>";
+                  for (var key of Object.keys(row)) {
+                      newRow += "<td>";
+                      newRow += String(row[key]);
+                      newRow += "</td>"
+                  }
+                  newRow += "</tr>";
+                  reportTableNode.innerHTML += newRow;
+              }
+          })
+      });
+      }
+      requestAttractionID();
   </script>
 
 </body>

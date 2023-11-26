@@ -221,7 +221,7 @@
         <p id="totalCount">Loading...</p>
         <div class="table-container" id="entry-table">
             <div class="table-header">
-                <table class="table table-hover table-responsive" id="report-table-head">   
+                <table class="table table-hover table-responsive" id="report-table">   
                     <tr>
                         <th>Visitor ID</th>
                         <th>Entry Date</th>
@@ -232,23 +232,22 @@
                     </tr>
                 </table>
             </div>
-            <div class="table-content">
-                <table class="table table-hover table-responsive" id="report-table">
-                </table>
-            </div>
-        </div>
 
+        </div>
       </div>
 
   <div class="b-example-divider b-example-vr"></div>
   <div class="container p-4" id="right-sidebar">                
-    <h4>Right Sidebar</h4>
-    
+    <div id="rainoutAlert" style="color: red; display: none;">
+      <span class="badge rounded-pill text-bg-danger">Rainout Alert: A rainout is in process today.</span>
+    </div>  
   </div>
 
 </main>
   <script type="module" src="js/connect.js"></script>
   <script src="server.js"></script> 
+  <script type="module" src="/public/js/rain.js"></script>
+
   <script>
     function updateChart(ticketData) {
         console.log("Ticket Data:", ticketData);
@@ -288,9 +287,9 @@
           .then((json) => {
               console.log("Received JSON data:", json);
   
-              var reportTableNode = document.getElementById("report-table-head");
+              var reportTableNode = document.getElementById("report-table");
               reportTableNode.innerHTML = `
-                  <tr id="table-header">
+                  <tr>
                       <th>Visitor ID</th>
                       <th>Entry Date</th>
                       <th>Entry Time</th>
@@ -300,19 +299,19 @@
                   </tr>
               `;
   
-              var reportTableNode2 = document.getElementById("report-table");
+              //var reportTableNode = document.getElementById("report-table");
               // Clear existing rows
-              reportTableNode2.innerHTML = "";
+              //reportTableNode.innerHTML = "";
   
               for (var row of json) {
-                  var newRow = "<tr id='table-content'>";
+                  var newRow = "<tr>";
                   for (var key of Object.keys(row)) {
                       newRow += "<td>";
                       newRow += String(row[key]);
                       newRow += "</td>";
                   }
                   newRow += "</tr>";
-                  reportTableNode2.innerHTML += newRow;
+                  reportTableNode.innerHTML += newRow;
               }
           })
           .catch(error => {
@@ -342,6 +341,12 @@
       // Update the total count
       updateTotalCount();
   </script>
+  <style>
+    .table-content {
+        max-height: 400px; /* Adjust the height as needed */
+        overflow-y: auto;
+    }
+</style>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

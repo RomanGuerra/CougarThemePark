@@ -1654,3 +1654,23 @@ app.post("/api/add-maintenance", (req, res) => {
   });
   connection.execSql(request);
 });
+
+app.get("/api/get-today-rainout", async function (req, res, next) {
+  try {
+    const today = new Date().toISOString().split('T')[0];  // Get today's date in YYYY-MM-DD format
+    console.log(today);
+    const sql_call = `
+      SELECT COUNT(*) AS rainoutCount
+      FROM RAINOUT
+      WHERE date = '${today}'`;
+    
+    const result = await mssql.query(sql_call);
+    const isRainoutToday = result.recordsets[0][0].rainoutCount > 0;
+
+    res.json({ isRainoutToday });
+
+  } catch (error) {
+    console.error('Error checking for rainout today:', error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
