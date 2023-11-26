@@ -1251,7 +1251,7 @@ app.get("/api/rainout-count", (req, res) => {
   var where_clause = '';
   var order_clause = '';
   if (req.query.time == "annual") {
-    where_clause = `WHERE YEAR(date) = ${req.query.year}`;
+    where_clause = `WHERE YEAR(RAINOUT_VISITOR_COUNT.date) = ${req.query.year}`;
   } else if (req.query.time == "quarter") {
     var qtr = req.query.quarter;
     var year = req.query.year;
@@ -1271,11 +1271,11 @@ app.get("/api/rainout-count", (req, res) => {
       m1 = 10;
       m2 = 12;
     }
-    where_clause = `WHERE MONTH(date) BETWEEN ${m1} AND ${m2} AND YEAR(date) = ${year}`;
+    where_clause = `WHERE MONTH(RAINOUT_VISITOR_COUNT.date) BETWEEN ${m1} AND ${m2} AND YEAR(RAINOUT_VISITOR_COUNT.date) = ${year}`;
   } else if (req.query.time == "month") {
     var month = req.query.month;
     var year = req.query.year;
-    where_clause = `WHERE MONTH(date) = ${month} AND YEAR(date) = ${year}`;
+    where_clause = `WHERE MONTH(RAINOUT_VISITOR_COUNT.date) = ${month} AND YEAR(RAINOUT_VISITOR_COUNT.date) = ${year}`;
   }
 
   if (req.query.filter != "none") {
@@ -1297,18 +1297,63 @@ app.get("/api/rainout-count", (req, res) => {
   }
 
   var sql = `
-  SELECT
-    rainout_ID, date, p_location, notes
+
+  SELECT 
+    RAINOUT_VISITOR_COUNT.rainout_ID,
+    RAINOUT_VISITOR_COUNT.date,
+    RAINOUT_VISITOR_COUNT.p_location,
+    RAINOUT_VISITOR_COUNT.notes,
+    ISNULL(RAINOUT_VISITOR_COUNT.visitor_count, 0) AS visitor_count,
+    ISNULL(TICKET_SALE_COUNT.ticket_count, 0) AS ticket_sale_count
   FROM
-    RAINOUT
+    (
+    SELECT 
+      RAINOUT_INFORMATION.rainout_ID,
+      RAINOUT_INFORMATION.date,
+      RAINOUT_INFORMATION.p_location,
+      RAINOUT_INFORMATION.notes,
+      VISITOR_COUNT.visitor_count
+    FROM
+      (
+      SELECT
+          rainout_ID, date, p_location, notes
+      FROM
+        RAINOUT
+      LEFT OUTER JOIN
+          THEME_PARK
+      ON
+        THEME_PARK.park_id  = RAINOUT.park_ID
+      ) AS RAINOUT_INFORMATION
+    LEFT OUTER JOIN
+      (
+      SELECT
+        entry_date,
+        COUNT(entry_date) AS visitor_count
+      FROM
+        ENTRY_LOG
+      GROUP BY
+        entry_date
+      ) AS VISITOR_COUNT
+    ON
+      RAINOUT_INFORMATION.date = VISITOR_COUNT.entry_date
+    ) AS RAINOUT_VISITOR_COUNT
   LEFT OUTER JOIN
-    THEME_PARK
+    (
+    SELECT
+      date,
+      COUNT(date) AS ticket_count
+    FROM
+      TICKET_SALE
+    GROUP BY
+      date
+    ) AS TICKET_SALE_COUNT
   ON
-    THEME_PARK.park_id  = RAINOUT.park_ID
+    RAINOUT_VISITOR_COUNT.date = TICKET_SALE_COUNT.date
   ${where_clause}
   ${order_clause}
   ;
   `
+
   executeStatement(sql, (rows) => {
     res.json(rows);
   })

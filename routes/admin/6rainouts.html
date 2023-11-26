@@ -214,7 +214,7 @@
 
   <div class="container p-5" id="center-container" style="overflow-y:scroll;">             
     <h2>Rainout Status Report</h2>
-    <p>Request the number of rainouts on a monthly basis</p>
+    <p>Request the number of rainouts on a time-basis. Generates the number of tickets sold on the given rainout day and how many visitors were in attendance that day.</p>
     <p>Set the parameters below to generate a report</p>
     <div id="time-input">
       <label for="Time">Time Period</label>
@@ -331,6 +331,8 @@
             <th>Date</th>
             <th>p_Location</th>
             <th>Notes</th>
+            <th>Visitor Count</th>
+            <th>Ticket Sales Count</th>
         </tr>
         `;
         for (var row of data) {
